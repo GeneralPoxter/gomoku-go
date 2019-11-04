@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Gomoku</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+    <script defer src="src/WSManager.js"></script>
+    <script defer src="src/Board.js"></script>
+	<script defer src="src/main.js"></script>
+    <script>window.onbeforeunload = function () {game.ws.closeWS();};</script>
+</head>
+
+<body onload="main('gomoku');">
+    <div class="buttons">
+        <button onclick="location.reload();main('gomoku');">Restart Gomoku</button>
+    </div>
+    <div class="svgBoard">
+        <svg id="board"></svg>
+    </div>
+</body>
+
+</html>

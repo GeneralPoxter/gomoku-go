@@ -1,0 +1,21 @@
+svg {
+  height: 800px;
+  width: 800px;
+}
+
+.svgBoard {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.an {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
