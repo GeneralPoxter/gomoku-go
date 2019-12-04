@@ -10,6 +10,7 @@ class WSManager {
         for (var r = 0; r < 21; r++) {
             this.pieces.push(Array(21).fill(0));
         }
+        this.text = document.getElementById("status");
         
         this.id = Math.random();
         this.myObj = {id:this.id, room:room, type:type, color:null, data:""};
@@ -17,29 +18,30 @@ class WSManager {
 
     // Server-client handshake
     onOpen() {
-        console.log("Connection established");
+        this.text.innerText = "Connecting to " + this.myObj.room;
         this.send("Connected to " + this.myObj.room);
     }
 
     // Error catching
     onError() {
-        console.log("Error");
+        this.text.innerText = "Error";
         this.closeWS();
     }
 
     // Receive messages from server
     onMessage(e) {
         var message = e.data;
-        console.log(message);
 
-        // Server assigns color
+        // Server assigns color, display status
         if (message == 0 || message == 1) {
             this.myObj.color = message;
+            this.text.innerText = "Online game\nConnected to " + this.myObj.room + "\nColor is " + ['black','white'][this.myObj.color];
         }
 
         // Server disconnect client
         if (message == "Disconnect") {
             this.closeWS();
+            this.text.innerHTML = "Disconnected from room";
         }
     }
 
