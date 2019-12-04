@@ -14,22 +14,25 @@
 </head>
 
 <body onload="main('gomoku','local');" onbeforeunload="connect('','');">
-    <div class="left">
-        <form name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
-            Join code:<br>
-            <input id="code" name="code" type="text"></input>
-        </form>
-        <p id="status">Local</p>
-    </div>
-    <div class="center">
-        <div class="buttons">
-            <button onclick="connect('', '');document.getElementById('code').value = '';">Restart Gomoku</button>
+    <div class="main">
+        <div class="left">
+            <form class="object" name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
+                Join code:<br>
+                <input id="code" name="code" type="text"/>
+                <input type="submit" value="Enter"/>
+            </form>
+            <p id="status">Local</p>
         </div>
-        <div class="svgBoard">
-            <svg id="board"></svg>
+        <div class="center">
+            <div class="object">
+                <button onclick="connect('', '');document.getElementById('code').value = '';">Restart Gomoku</button>
+            </div>
+            <div class="svgBoard">
+                <svg id="board"></svg>
+            </div>
         </div>
-    </div>
-    <div class="right">
+        <div class="right">
+        </div>
     </div>
 </body>
 
