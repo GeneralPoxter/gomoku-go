@@ -9,6 +9,7 @@
 .left {
     display: flex;
     justify-content: left;
+    flex-direction: column;
     width: 10%;
     height: 100%;
 }
@@ -24,11 +25,18 @@
 .right {
     display: flex;
     justify-content: right;
+    flex-direction: column;
     width: 10%;
     height: 100%;
 }
 
-.object {
+.lObject {
+    display: flex;
+    justify-content: left;
+    width: 100%;
+}
+
+.cObject {
     display: flex;
     justify-content: center;
     width: 100%;
@@ -44,12 +52,6 @@ svg {
     justify-content: center;
     padding-top: 10px;
 }
-
-.buttons {
-    display: flex;
-    justify-content: center;
-}
-
 
 .an {
     display: flex;

@@ -16,15 +16,14 @@
 <body onload="main('gomoku','local');" onbeforeunload="connect('','');">
     <div class="main">
         <div class="left">
-            <form class="object" name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
+            <form name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
                 Join code:<br>
-                <input id="code" name="code" type="text"/>
-                <input type="submit" value="Enter"/>
+                <input id="code" name="code" type="text"/><br>
             </form>
-            <p id="status">Local</p>
+            <p id="status" class="lObject">Local</p>
         </div>
         <div class="center">
-            <div class="object">
+            <div class="cObject">
                 <button onclick="connect('', '');document.getElementById('code').value = '';">Restart Gomoku</button>
             </div>
             <div class="svgBoard">
