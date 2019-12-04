@@ -1,21 +1,44 @@
-svg {
-  height: 800px;
-  width: 800px;
+.left {
+    display: flex;
+    justify-content: left;
+    width: 10%;
+    height: 100%;
 }
 
+.center {
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    height: 100%;
+}
+
+.left {
+    display: flex;
+    justify-content: right;
+    width: 10%;
+    height: 100%;
+}
+
+svg {
+    height: 800px;
+    width: 800px;
+}
+
+/*
 .svgBoard {
-  display: flex;
-  justify-content: center;
-  margin-top: 2.5px;
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5px;
 }
 
 .buttons {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
+*/
 
 .an {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
 }

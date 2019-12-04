@@ -8,17 +8,28 @@
 	<link href="style.css" rel="stylesheet" type="text/css" />
 	<script src="https://d3js.org/d3.v5.min.js"></script>
     <script defer src="src/WSManager.js"></script>
+    <script defer src="src/Game.js"></script>
     <script defer src="src/Board.js"></script>
 	<script defer src="src/main.js"></script>
-    <script>window.onbeforeunload = function () {game.ws.closeWS();};</script>
 </head>
 
-<body onload="main('gomoku');">
-    <div class="buttons">
-        <button onclick="location.reload();main('gomoku');">Restart Gomoku</button>
+<body onload="main('gomoku','local');" onbeforeunload="connect('','');">
+    <div class="left">
+        <form name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
+            Join code:<br>
+            <input id="code" name="code" type="text"></input>
+        </form>
+        <p id="status">Local</p>
     </div>
-    <div class="svgBoard">
-        <svg id="board"></svg>
+    <div class="center">
+        <div class="buttons">
+            <button onclick="connect('', '');document.getElementById('code').value = '';">Restart Gomoku</button>
+        </div>
+        <div class="svgBoard">
+            <svg id="board"></svg>
+        </div>
+    </div>
+    <div class="right">
     </div>
 </body>
 
