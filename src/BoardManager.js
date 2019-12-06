@@ -5,9 +5,11 @@ class BoardManager {
     }
 
     newBoard() {
+        var board = [];
         for (var r = 0; r < 21; r++) {
-            this.boards.push(Array(21).fill(0));
+            board.push(Array(21).fill(0));
         }
+        this.boards.push(board);
     }
 
     updateBoard(board, move) {
@@ -27,7 +29,7 @@ class BoardManager {
             // Count how many pieces in each direction
             for (var i = 0; i < 2; i++) {
                 var m = 1;
-                while (this.board[board][move[1] + m * d[i][0]][move[2] + m * d[i][1]] == move[0] + 1) {
+                while (this.boards[board][move[1] + m * d[i][0]][move[2] + m * d[i][1]] == move[0] + 1) {
                     line++;
                     m++;
                 }

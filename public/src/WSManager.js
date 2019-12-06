@@ -13,13 +13,13 @@ class WSManager {
         this.text = document.getElementById("status");
         
         this.id = Math.random();
-        this.myObj = {id:this.id, room:room, type:type, color:null, data:""};
+        this.data = {id:this.id, room:room, type:type, color:null, msg:""};
     }
 
     // Server-client handshake
     onOpen() {
-        this.text.innerText = "Connecting to " + this.myObj.room;
-        this.send("Connected to " + this.myObj.room);
+        this.text.innerText = "Connecting to " + this.data.room;
+        this.send("Connected to " + this.data.room);
     }
 
     // Error catching
@@ -34,8 +34,8 @@ class WSManager {
 
         // Server assigns color, display status
         if (message == 0 || message == 1) {
-            this.myObj.color = message;
-            this.text.innerText = "Online game\nConnected to " + this.myObj.room + "\nColor is " + ['black','white'][this.myObj.color];
+            this.data.color = message;
+            this.text.innerText = "Online game\nConnected to " + this.data.room + "\nColor is " + ['black','white'][this.data.color];
         }
 
         // Server disconnect client
@@ -47,14 +47,19 @@ class WSManager {
 
     // Send messages to server
     send(message) {
-        this.myObj.data = message;
-        this.wsc.send(JSON.stringify(this.myObj));
+        this.data.msg = message;
+        this.wsc.send(JSON.stringify(this.data));
     }
 
     // Disconnect from server and close WebSocket
     closeWS() {
-        this.send("Disconnected from " + this.myObj.room);
-        console.log("Disconnected from server");
+        this.send("Disconnected from " + this.data.room);
         this.wsc.close();
+    }
+
+    // Update board
+    updateBoard(newPieces) {
+        this.pieces = newPieces;
+        
     }
 }

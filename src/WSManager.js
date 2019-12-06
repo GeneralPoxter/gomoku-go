@@ -2,14 +2,21 @@
 const BoardManager = require("./BoardManager.js");
 const boards = new BoardManager();
 var rooms = [];
-// Each game: [client (black player), client (white player), game type]
+// Each game: [client (black player), client (white player), game type, turn color]
 var games = [];
 
 function connection(ws) {
     ws.on('message', function incoming(e) {
-        // Display incoming client messages
-        var message = JSON.parse(e);
-        console.log('received from %d: %s', message.id, message.data);
+        // Filter incoming messages
+        try {
+            var message = JSON.parse(e);
+        }
+        catch(error) {
+            return;
+        }
+
+        // Display incoming messages
+        console.log('received from %d: %s', message.id, message.msg);
 
         // Functionality for existing room
         if (rooms.includes(message.room)) {
@@ -17,7 +24,7 @@ function connection(ws) {
             // Functionality for accepted clients
             if (games[i].includes(message.id) && games[i][2] == message.type) {
                 // Functionality for client disconnect
-                if (message.data.slice(0, 12) == "Disconnected") {
+                if (message.msg.slice(0, 12) == "Disconnected") {
                     if (games[i][0] == message.id) {
                         games[i][0] = null;
                     }
@@ -34,16 +41,21 @@ function connection(ws) {
                 }
                 // Functionality for moves
                 else {
-                    boards.updateBoard(i, message.data);
-                    if (boards.checkGomoku(i, message.data)) {
+                    var move = message.msg.split(' ');
+                    for (var j = 0; j < 3; j++) {
+                        move[j] = parseInt(move[j], 10);
+                    }
+                    boards.updateBoard(i, move);
+                    if (boards.checkGomoku(i, move)) {
                         ws.send("Win: " + message.color);
                     };
+                    ws.send(this.boards.boards[i]);
                 }
             }
 
             // Accept incoming client if available
             else if ((games[i][0] == null || games[i][1] == null) && games[i][2] == message.type) {
-                if (message.data.slice(0, 9) == "Connected") {
+                if (message.msg.slice(0, 9) == "Connected") {
                     var color = games[i].indexOf(null);
                     games[i][color] = message.id;
                     ws.send(color);
@@ -57,9 +69,9 @@ function connection(ws) {
         }
 
         // Create new room, add incoming client
-        else {
+        else if (message.room != null) {
             rooms.push(message.room);
-            games.push([null, null, message.type]);
+            games.push([null, null, message.type, 0]);
             boards.newBoard();
             var color = Math.floor(Math.random() * 2);
             games[games.length - 1][color] = message.id;

@@ -47,16 +47,4 @@ class Board {
         }
     }
 
-    /*
-    // Add piece with given x and y coordinates
-    convertPiece(x, y) {
-        this.board.selectAll("circle").nodes().forEach(p => {
-            var piece = d3.select(p);
-            if (piece.attr("cx") == x && piece.attr("cy") == y) {
-                this.addPiece(p);
-            }
-        });
-    }
-    */
-
 }
