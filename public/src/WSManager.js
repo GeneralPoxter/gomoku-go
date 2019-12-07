@@ -60,6 +60,7 @@ class WSManager {
 
         // Server claims a win
         else if (message.slice(0, 3) == "Win") {
+            this.text.innerText = "Online game\nGame is over\nPlease press restart";
             if (parseInt(message.slice(-1), 10) == this.data.color) {
                 this.turn.innerText = "You won";
             }
@@ -71,7 +72,7 @@ class WSManager {
         // Server disconnect client
         else if (message == "Disconnect") {
             this.closeWS();
-            this.text.innerText = "Disconnected from room\nPlease press restart;";
+            this.text.innerText = "Disconnected from room\nPlease press restart";
         }
 
         // Server wants client to display message
