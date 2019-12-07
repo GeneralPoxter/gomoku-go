@@ -49,7 +49,7 @@ function connection(ws) {
                     if (boards.checkGomoku(i, move)) {
                         ws.send("Win: " + message.color);
                     };
-                    ws.send(this.boards.boards[i]);
+                    ws.send(JSON.stringify(boards.boards[i]));
                 }
             }
 

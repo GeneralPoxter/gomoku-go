@@ -14,6 +14,8 @@ class WSManager {
         
         this.id = Math.random();
         this.data = {id:this.id, room:room, type:type, color:null, msg:""};
+
+        this.board = new Board();
     }
 
     // Server-client handshake
@@ -38,6 +40,11 @@ class WSManager {
             this.text.innerText = "Online game\nConnected to " + this.data.room + "\nColor is " + ['black','white'][this.data.color];
         }
 
+        // Server updates board
+        if (message[0] == "[") {
+            this.updateBoard(JSON.parse(message));
+        }
+
         // Server disconnect client
         if (message == "Disconnect") {
             this.closeWS();
@@ -57,9 +64,15 @@ class WSManager {
         this.wsc.close();
     }
 
+    // Render board
+    renderBoard() {
+        var cur = this;
+        board.render(this.pieces, function(){var piece = d3.select(this); cur.send(ws.data.color + " " + (piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40))});
+    }
+
     // Update board
     updateBoard(newPieces) {
         this.pieces = newPieces;
-        
+        this.renderBoard();
     }
 }

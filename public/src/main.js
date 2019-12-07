@@ -13,7 +13,7 @@ function main(type, mode) {
         board.render(game.pieces, function() {game.addPiece(this)});
     }
     else {
-        board.render(ws.pieces, function(){var piece = d3.select(this); ws.send(ws.data.color + " " + (piece.attr("cy") / 40 - 1) + " " + (piece.attr("cx") / 40 - 1))});
+        ws.renderBoard();
     }
 }
 
