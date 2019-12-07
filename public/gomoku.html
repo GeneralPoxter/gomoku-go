@@ -13,19 +13,19 @@
 	<script defer src="src/main.js"></script>
 </head>
 
-<body onload="main('gomoku','local');" onbeforeunload="connect('','');">
+<body onload="main('gomoku','local');" onbeforeunload="connect('','');return null;">
+    <div style="background-image: url('./img/matte.jpg'); background-size: cover;">
     <div class="main">
         <div class="left">
-            <form name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
-                Join code:<br>
-                <input id="code" name="code" type="text"/><br>
+            <div class="cObject"><button class="restart" onclick="connect('','');document.getElementById('code').value = '';">Restart Gomoku</button></div>
+            <form name="input" style="padding-top: 10px;" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
+                <div class="text">Join code:</div>
+                <input id="code" name="code" type="text"/>
             </form>
-            <p id="status" class="lObject"></p>
+            <div class="lObject"><p id="status" class="text"></p></div>
+            <div class="lObject"><p id="turn" class="text"></p></div>
         </div>
         <div class="center">
-            <div class="cObject">
-                <button onclick="connect('','');document.getElementById('code').value = '';">Restart Gomoku</button>
-            </div>
             <div class="svgBoard">
                 <svg id="board"></svg>
             </div>

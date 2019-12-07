@@ -6,11 +6,11 @@ class Game {
         this.end = false;
         this.color = 0;
         this.mode = mode;
-        this.turn = true;
         this.pieces = [];
         for (var r = 0; r < 21; r++) {
             this.pieces.push(Array(21).fill(0));
         }
+        this.turn = document.getElementById("turn");
     }
 
      // Add piece to board
@@ -24,11 +24,15 @@ class Game {
             piece.attr("stroke", "#808080");
             this.pieces[this.r][this.c] = this.color + 1;
 
-            // Check move and update color
-            if (this.mode == "gomoku") {
-                this.checkGomoku();
+            // Check move and update color and turn
+            if (this.mode == "gomoku" && this.checkGomoku()) {
+                this.end = true;
+                this.turn.innerText = ["Black", "White"][this.color] + " won";
             }
-            this.color = (this.color + 1) % 2;
+            else {
+                this.color = (this.color + 1) % 2;
+                this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
+            }
         }
     }
 
@@ -37,12 +41,14 @@ class Game {
         // Array of possible orientations for 5 in a row
         var dir = [[[1, 0], [-1, 0]], [[0, 1], [0, -1]], [[1, 1], [-1, -1]], [[1, -1], [-1, 1]]];
 
-        dir.forEach(d => {
+        for (var i = 0; i < 4; i++) {
             var line = 1;
+            var d = dir[i];
+
             // Count how many pieces in each direction
-            for (var i = 0; i < 2; i++) {
+            for (var j = 0; j < 2; j++) {
                 var m = 1;
-                while (this.pieces[this.r + m * d[i][0]][this.c + m * d[i][1]] == this.color + 1) {
+                while (this.pieces[this.r + m * d[j][0]][this.c + m * d[j][1]] == this.color + 1) {
                     line++;
                     m++;
                 }
@@ -50,9 +56,10 @@ class Game {
 
             // End game
             if (line == 5) {
-                this.end = true;
-                return;
+                return true;
             }
-        });
+        }
+        
+        return false;
     }
 }

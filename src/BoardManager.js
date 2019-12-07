@@ -14,31 +14,36 @@ class BoardManager {
 
     updateBoard(board, move) {
         this.boards[board][move[1]][move[2]] = move[0] + 1;
+        this.started = true;
     }
 
     deleteBoard(index) {
         this.boards.splice(index, 1);
     }
 
-    checkGomoku(board, move) {
+    // Check for 5 in a row
+    checkGomoku(board, move, color) {
         // Array of possible orientations for 5 in a row
         var dir = [[[1, 0], [-1, 0]], [[0, 1], [0, -1]], [[1, 1], [-1, -1]], [[1, -1], [-1, 1]]];
 
-        dir.forEach(d => {
+        for (var i = 0; i < 4; i++) {
             var line = 1;
+            var d = dir[i];
+
             // Count how many pieces in each direction
-            for (var i = 0; i < 2; i++) {
+            for (var j = 0; j < 2; j++) {
                 var m = 1;
-                while (this.boards[board][move[1] + m * d[i][0]][move[2] + m * d[i][1]] == move[0] + 1) {
+                while (this.boards[board][move[1] + m * d[j][0]][move[2] + m * d[j][1]] == move[0] + 1) {
                     line++;
                     m++;
                 }
             }
 
+            // End game
             if (line == 5) {
                 return true;
             }
-        });
+        }
 
         return false;
     }
