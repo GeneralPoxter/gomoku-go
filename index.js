@@ -8,7 +8,7 @@ const server = express()
   .use(express.static("public", { root: '.' }))
   .get("/", function(req, res) {
     res.sendFile("index.html", { root: 'public' })
-  }
+  })
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });
