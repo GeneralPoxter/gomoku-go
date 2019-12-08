@@ -32,8 +32,7 @@ class Game {
             // Check move and update color and turn
             if (this.mode == "gomoku" && this.checkGomoku()) {
                 this.end = true;
-                this.txt.innerText = "Local game\nGame has ended\nPlease press restart";
-                this.turn.innerText = ["Black", "White"][this.color] + " won";
+                this.turn.innerText = ["Black", "White"][this.color] + " won\nPlease press restart";
             }
             else {
                 this.color = (this.color + 1) % 2;
