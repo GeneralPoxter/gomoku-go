@@ -2,7 +2,7 @@
 class WSManager {
     constructor(room, type) {
         // wsc = WebSocket client
-        this.wsc = new WebSocket("wss://1111-c487bfda-ee48-4b91-9872-95bc4bbef4f6.ws-us02.gitpod.io/");
+        this.wsc = new WebSocket(location.origin.replace(/^http/, 'ws'));
         this.wsc.onopen = e => this.onOpen();
         this.wsc.onerror = e => this.onError();
         this.wsc.onmessage = e => this.onMessage(e);
