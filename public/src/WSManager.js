@@ -65,12 +65,11 @@ class WSManager {
 
         // Server claims a win
         else if (message == "Win" || message == "Lose") {
-            this.text.innerText = "Online game\nGame has ended\nPlease press restart";
             if (message == "Win") {
-                this.turn.innerText = "You won";
+                this.turn.innerText = "You won\nPlease press restart";
             }
             else {
-                this.turn.innerText = "You lost";
+                this.turn.innerText = "You lost\nPlease press restart";
             }
         }
 
