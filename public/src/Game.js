@@ -10,7 +10,12 @@ class Game {
         for (var r = 0; r < 21; r++) {
             this.pieces.push(Array(21).fill(0));
         }
+
+        // Set up HTML
+        this.text = document.getElementById("status");
         this.turn = document.getElementById("turn");
+        this.text.innerText = "Local game";
+        this.turn.innerText = "Black's turn";
     }
 
      // Add piece to board
@@ -27,6 +32,7 @@ class Game {
             // Check move and update color and turn
             if (this.mode == "gomoku" && this.checkGomoku()) {
                 this.end = true;
+                this.txt.innerText = "Local game\nGame has ended\nPlease press restart";
                 this.turn.innerText = ["Black", "White"][this.color] + " won";
             }
             else {

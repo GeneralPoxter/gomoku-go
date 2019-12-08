@@ -22,14 +22,14 @@ function connection(ws) {
         // Functionality for existing room
         if (rooms.includes(message.room)) {
             var i = rooms.indexOf(message.room);
+
             // Functionality for accepted clients
             if (games[i].includes(message.id) && games[i][2] == message.type) {
+                var color = games[i].indexOf(message.id);
+
                 // Find other client's ws
                 if (games[i][0] != null && games[i][1] != null) {
-                    var otherWS = clients[games[i][0]];
-                    if (message.color == 0) {
-                        otherWS = clients[games[i][1]];
-                    }
+                    var otherWS = clients[games[i][(color + 1) % 2]];
                 }
 
                 // Functionality for client disconnect
@@ -57,7 +57,7 @@ function connection(ws) {
                 }
 
                 // Functionality for moves
-                else if (message.color == games[i][3]) {
+                else if (color == games[i][3]) {
                     // Format move
                     var move = message.msg.split(' ');
                     for (var j = 0; j < 3; j++) {
@@ -66,19 +66,21 @@ function connection(ws) {
                     
                     // Check if the move is valid
                     if (boards.boards[i][move[1]][move[2]] == 0) {
-                        // Make move and update boards
+                        // Format move
                         var move = message.msg.split(' ');
                         for (var j = 0; j < 3; j++) {
                             move[j] = parseInt(move[j], 10);
                         }
+
+                        // Update server and client boards
                         boards.updateBoard(i, move);
                         ws.send(JSON.stringify(boards.boards[i]));
                         otherWS.send(JSON.stringify(boards.boards[i]));
 
                         // Check win
                         if (boards.checkGomoku(i, move)) {
-                            ws.send("Win: " + message.color);
-                            otherWS.send("Win: " + message.color);
+                            ws.send("Win");
+                            otherWS.send("Lose");
                             games[i][3] = 2;
                         }
                         // Update turns
@@ -93,23 +95,29 @@ function connection(ws) {
             // Accept incoming client if available
             else if ((games[i][0] == null || games[i][1] == null) && !(games[i].includes(message.id)) && games[i][2] == message.type) {
                 if (message.msg.slice(0, 9) == "Connected") {
+                    // Assign color and ws
                     var color = games[i].indexOf(null);
                     games[i][color] = message.id;
                     clients[message.id] = ws;
-                    ws.send(color);
+
                     // Find other client's ws
                     var otherWS = clients[games[i][(color + 1) % 2]];
+
                     // Set up if game has not started
                     if (games[i][3] == -1) {
                         otherWS.send("Opponent has connected");
                         games[i][3] = 0;
                     }
+
                     // Update client if game has started
                     else {
                         ws.send(JSON.stringify(boards.boards[i]));
                         otherWS.send("Opponent rejoined");
                         games[i][3] -= 2;
                     }
+
+                    // Send client updated information
+                    ws.send(color);
                     ws.send("T" + games[i][3].toString(10));
                     ws.send("Opponent has connected");
                 }
@@ -121,14 +129,19 @@ function connection(ws) {
             }
         }
 
-        // Create new room, add incoming client
+        // Functionality for new room and client
         else if (message.room != null) {
+            // Create new room
             rooms.push(message.room);
             games.push([null, null, message.type, -1]);
             boards.newBoard();
+
+            // Assign color and ws
             var color = Math.floor(Math.random() * 2);
             games[games.length - 1][color] = message.id;
             clients[message.id] = ws;
+
+            // Send client information
             ws.send(color);
             ws.send("T0");
             ws.send("Room created");

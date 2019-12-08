@@ -7,14 +7,19 @@ class WSManager {
         this.wsc.onerror = e => this.onError();
         this.wsc.onmessage = e => this.onMessage(e);
         
+        // Prepare data for ws handshakes
         this.id = Math.random();
-        this.data = {id:this.id, room:room, type:type, color:null, msg:""};
+        this.color;
+        this.data = {id:this.id, room:room, type:type, msg:""};
 
+        // Initialize board
         this.board = new Board();
         this.pieces = [];
         for (var r = 0; r < 21; r++) {
             this.pieces.push(Array(21).fill(0));
         }
+
+        // Set up HTML
         this.text = document.getElementById("status");
         this.turn = document.getElementById("turn");
     }
@@ -38,8 +43,8 @@ class WSManager {
 
         // Server assigns color, display status
         if (message == 0 || message == 1) {
-            this.data.color = message;
-            this.text.innerText = "Online game\nColor is " + ["black","white"][this.data.color];
+            this.color = message;
+            this.text.innerText = "Online game\nColor is " + ["black","white"][this.color];
         }
 
         // Server gives the current turn
@@ -59,9 +64,9 @@ class WSManager {
         }
 
         // Server claims a win
-        else if (message.slice(0, 3) == "Win") {
-            this.text.innerText = "Online game\nGame is over\nPlease press restart";
-            if (parseInt(message.slice(-1), 10) == this.data.color) {
+        else if (message == "Win" || message == "Lose") {
+            this.text.innerText = "Online game\nGame has ended\nPlease press restart";
+            if (message == "Win") {
                 this.turn.innerText = "You won";
             }
             else {
@@ -77,7 +82,7 @@ class WSManager {
 
         // Server wants client to display message
         else {
-            this.text.innerText = "Online game\nColor is " + ["black","white"][this.data.color] + "\n" + message;
+            this.text.innerText = "Online game\nColor is " + ["black","white"][this.color] + "\n" + message;
         }
     }
 
@@ -96,7 +101,7 @@ class WSManager {
     // Render board
     renderBoard() {
         var cur = this;
-        board.render(this.pieces, function(){var piece = d3.select(this); cur.send(ws.data.color + " " + (piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40))});
+        board.render(this.pieces, function(){var piece = d3.select(this); cur.send(ws.color + " " + (piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40))});
     }
 
     // Update board
