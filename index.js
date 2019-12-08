@@ -7,13 +7,13 @@ const wss = new WebSocket.Server({ port: 1111 });
 const app = express();
 
 // Host all files at public/
-app.use("/", express.static("public"));
+app.use(express.static("public", { root: '.' }));
 
 console.log('start');
 wss.on('connection', connection);
 
 app.get("/", function(request, response) {
-    response.sendFile("./public/index.html");
+    response.sendFile("index.html", { root: '.' });
 });
 
 // Run the server
