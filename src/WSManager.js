@@ -63,6 +63,7 @@ function connection(ws) {
                     try {
                         var r = parseInt(move[0], 10);
                         var c = parseInt(move[1], 10);
+                    }
                     catch(error) {
                         return;
                     }
