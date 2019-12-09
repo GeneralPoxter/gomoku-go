@@ -60,25 +60,22 @@ function connection(ws) {
                 else if (color == games[i][3]) {
                     // Format move
                     var move = message.msg.split(' ');
-                    for (var j = 0; j < 3; j++) {
-                        move[j] = parseInt(move[j], 10);
+                    try {
+                        var r = parseInt(move[0], 10);
+                        var c = parseInt(move[1], 10);
+                    catch(error) {
+                        return;
                     }
                     
                     // Check if the move is valid
-                    if (boards.boards[i][move[1]][move[2]] == 0) {
-                        // Format move
-                        var move = message.msg.split(' ');
-                        for (var j = 0; j < 3; j++) {
-                            move[j] = parseInt(move[j], 10);
-                        }
-
+                    if (boards.boards[i][r][c] == 0) {
                         // Update server and client boards
-                        boards.updateBoard(i, move);
+                        boards.updateBoard(i, color, r, c);
                         ws.send(JSON.stringify(boards.boards[i]));
                         otherWS.send(JSON.stringify(boards.boards[i]));
 
                         // Check win
-                        if (boards.checkGomoku(i, move)) {
+                        if (boards.checkGomoku(i, color, r, c)) {
                             ws.send("Win");
                             otherWS.send("Lose");
                             games[i][3] = 2;
