@@ -100,7 +100,7 @@ class WSManager {
     // Render board
     renderBoard() {
         var cur = this;
-        board.render(this.pieces, function(){var piece = d3.select(this); cur.send(ws.color + " " + (piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40))});
+        board.render(this.pieces, function(){var piece = d3.select(this); cur.send((piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40))});
     }
 
     // Update board
