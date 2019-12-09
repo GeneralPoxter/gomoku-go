@@ -12,17 +12,17 @@ class BoardManager {
         this.boards.push(board);
     }
 
-    updateBoard(board, move) {
-        this.boards[board][move[1]][move[2]] = move[0] + 1;
+    updateBoard(board, color, r, c) {
+        this.boards[board][r][c] = color + 1;
         this.started = true;
     }
 
-    deleteBoard(index) {
-        this.boards.splice(index, 1);
+    deleteBoard(board) {
+        this.boards.splice(board, 1);
     }
 
     // Check for 5 in a row
-    checkGomoku(board, move, color) {
+    checkGomoku(board, color, r, c) {
         // Array of possible orientations for 5 in a row
         var dir = [[[1, 0], [-1, 0]], [[0, 1], [0, -1]], [[1, 1], [-1, -1]], [[1, -1], [-1, 1]]];
 
@@ -33,7 +33,7 @@ class BoardManager {
             // Count how many pieces in each direction
             for (var j = 0; j < 2; j++) {
                 var m = 1;
-                while (this.boards[board][move[1] + m * d[j][0]][move[2] + m * d[j][1]] == move[0] + 1) {
+                while (this.boards[board][r + m * d[j][0]][c + m * d[j][1]] == color + 1) {
                     line++;
                     m++;
                 }
