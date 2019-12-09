@@ -76,7 +76,6 @@ class WSManager {
         // Server disconnect client
         else if (message == "Disconnect") {
             this.closeWS();
-            this.text.innerText = "Disconnected from room\nPlease press restart";
         }
 
         // Server wants client to display message
@@ -94,6 +93,7 @@ class WSManager {
     // Disconnect from server and close WebSocket
     closeWS() {
         this.send("Disconnected from " + this.data.room);
+        this.text.innerText = "Disconnected from room\nPlease press restart";
         this.wsc.close();
     }
 
