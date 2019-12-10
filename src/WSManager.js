@@ -29,32 +29,8 @@ function connection(ws) {
                         var otherWS = clients[games[i][(color + 1) % 2]];
                     }
 
-                    // Functionality for client disconnect
-                    if (message.msg.slice(0, 12) == "Disconnected") {
-                        if (games[i][0] == message.id) {
-                            games[i][0] = null;
-                        }
-                        else {
-                            games[i][1] = null;
-                        }
-
-                        delete clients[message.id];
-
-                        // Delete room if both clients disconnect
-                        if (games[i][0] == null && games[i][1] == null) {
-                            rooms.splice(i, 1);
-                            games.splice(i, 1);
-                            boards.deleteBoard(i);
-                        }
-                        // Inform other client that opponent disconnected
-                        else {
-                            otherWS.send("Opponent disconnected");
-                            games[i][3] += 2;
-                        }
-                    }
-
                     // Functionality for moves
-                    else if (color == games[i][3]) {
+                    if (color == games[i][3]) {
                         // Format move
                         var move = message.msg.split(' ');
                         var r = parseInt(move[0], 10);
@@ -115,7 +91,7 @@ function connection(ws) {
 
                 // Disconnect incoming client if room capacity reached
                 else {
-                    ws.send("Disconnect");
+                    ws.close();
                 }
             }
 
@@ -139,6 +115,53 @@ function connection(ws) {
         }
         catch (error) {
             return;
+        }
+    });
+
+    ws.on('close', function close(e) {
+        // Find id
+        var id;
+        for (let [key, value] of Object.entries(clients)) {
+            if (value == ws) {
+                id = parseFloat(key);
+                break;
+            }
+        }
+        
+        // Find room
+        for (var i = 0; i < games.length; i++) {
+            if (games[i].includes(id)) {
+                console.log("received from %d: %s", id, "Disconnected from " + rooms[i]);
+                var color = games[i].indexOf(id);
+
+                // Find other client's ws
+                if (games[i][0] != null && games[i][1] != null) {
+                    var otherWS = clients[games[i][(color + 1) % 2]];
+                }
+
+                // Functionality for client disconnect
+                if (games[i][0] == id) {
+                    games[i][0] = null;
+                }
+                else {
+                    games[i][1] = null;
+                }
+
+                // Delete room if both clients disconnect
+                if (games[i][0] == null && games[i][1] == null) {
+                    rooms.splice(i, 1);
+                    games.splice(i, 1);
+                    boards.deleteBoard(i);
+                }
+                // Inform other client that opponent disconnected
+                else {
+                    otherWS.send("Opponent disconnected");
+                    games[i][3] += 2;
+                }
+
+                return;
+            }
+
         }
     });
 }

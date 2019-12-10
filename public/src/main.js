@@ -19,7 +19,7 @@ function main(type, mode) {
 function connect(room, type) {
     if (ws != null) {
         if (ws.wsc.readyState < 2) {
-             ws.closeWS();
+             ws.wsc.close();
         }
         ws = null;
     }
