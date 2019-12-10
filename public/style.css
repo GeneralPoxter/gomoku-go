@@ -4,6 +4,7 @@ html, body{
 }
 
 .main {
+    box-sizing: border-box;
     display: flex;
     justify-content: left;
     flex-direction: row;
@@ -12,6 +13,7 @@ html, body{
     padding-top: 2%;
     padding-bottom: 2%;
 }
+
 
 .left {
     display: flex;
@@ -86,4 +88,21 @@ svg {
     display: flex;
     justify-content: center;
     margin-top: 15px;
+}
+
+@media only screen and (max-width: 1330px) {
+    .main {
+        flex-direction: column;
+    }
+    .center {
+        width: 100%;
+    }
+    .left {
+        /* justify-content: center; */
+        
+    }
+    /* svg {
+        height: 100vw;
+        width: 100vw;
+        } */
 }
