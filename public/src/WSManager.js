@@ -4,6 +4,7 @@ class WSManager {
         // wsc = WebSocket client
         this.wsc = new WebSocket(location.origin.replace(/^http/, 'ws'));
         this.wsc.onopen = e => this.onOpen();
+        this.wsc.onclose = e => this.onClose();
         this.wsc.onerror = e => this.onError();
         this.wsc.onmessage = e => this.onMessage(e);
         
@@ -28,6 +29,12 @@ class WSManager {
     onOpen() {
         this.text.innerText = "Connecting to " + this.data.room;
         this.send("Connected to " + this.data.room);
+    }
+
+    // Connection closed
+    onClose() {
+        this.send("Disconnected from " + this.data.room);
+        this.text.innerText = "Disconnected from room\nPlease press restart";
     }
 
     // Error catching
@@ -92,8 +99,8 @@ class WSManager {
 
     // Disconnect from server and close WebSocket
     closeWS() {
-        this.send("Disconnected from " + this.data.room);
-        this.text.innerText = "Disconnected from room\nPlease press restart";
+        //this.send("Disconnected from " + this.data.room);
+        //this.text.innerText = "Disconnected from room\nPlease press restart";
         this.wsc.close();
     }
 
