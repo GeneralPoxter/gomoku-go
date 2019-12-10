@@ -7,9 +7,9 @@ var rooms = [];
 var games = [];
 
 function connection(ws) {
-    // Try-catch to prevent server from crashing
-    try {
-        ws.on('message', function incoming(e) {
+    ws.on('message', function incoming(e) {
+        // Try-catch to prevent server from crashing
+        try {
             // Parse incoming messages
             var message = JSON.parse(e);
 
@@ -136,10 +136,10 @@ function connection(ws) {
                 ws.send("T0");
                 ws.send("Room created");
             }
-        });
-    }
-    catch (error) {
-        return;
-    }
+        }
+        catch (error) {
+            return;
+        }
+    });
 }
 module.exports = connection;
