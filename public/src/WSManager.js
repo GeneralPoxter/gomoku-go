@@ -39,7 +39,7 @@ class WSManager {
     // Error catching
     onError() {
         this.text.innerText = "Error";
-        this.closeWS();
+        this.wsc.close();
     }
 
     // Receive messages from server
