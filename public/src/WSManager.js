@@ -33,7 +33,9 @@ class WSManager {
 
     // Connection closed
     onClose() {
-        this.text.innerText = "Disconnected from room\nPlease press restart";
+        if (this.text.innerText != "Local game") {
+            this.text.innerText = "Disconnected from room\nPlease press restart";
+        }
     }
 
     // Error catching
