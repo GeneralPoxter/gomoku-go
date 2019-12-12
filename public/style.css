@@ -92,3 +92,24 @@ svg {
     display: flex;
     justify-content: center;
 }
+
+@media only screen and (max-width: 1330px) {
+    .main {
+        flex-direction: column;
+    }
+    .left {
+        justify-content: center;
+        width: 100%
+    }
+    .center {
+        width: 100%;
+    }
+    .right {
+        justify-content: center;
+        width: 100%
+    }
+    /* svg {
+        height: 100vw;
+        width: 100vw;
+        } */
+}
