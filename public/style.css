@@ -22,7 +22,6 @@ html, body{
     overflow-y: scroll;
 }
 
-
 .left {
     display: flex;
     justify-content: left;
@@ -86,6 +85,7 @@ button:hover {
 svg {
     height: 800px;
     width: 800px;
+    overflow: scroll;
 }
 
 .svg-board {
