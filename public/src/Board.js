@@ -6,7 +6,7 @@ class Board {
         this.board = d3.select("#board");
 
         // Set up board
-        document.getElementById("board").style.backgroundColor = "#fce195";
+        // document.getElementById("board").style.backgroundImage = url('../img/background.jpg'); // #fce195
     }
 
     // Render board and pieces
@@ -24,7 +24,7 @@ class Board {
                             .attr("y", y)
                             .attr("height", "40")
                             .attr("width", "40")
-                            .attr("fill", "#fce195")
+                            .attr("fill", "transparent")
                             .attr("stroke-width", "1.5")
                             .attr("stroke", "black");
                     }

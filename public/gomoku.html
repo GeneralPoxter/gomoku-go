@@ -16,10 +16,9 @@
 </head>
 
 <body onload="main('gomoku','local');" onbeforeunload="connect('','');return null;">
-    <div style="background-image: url('./img/matte.jpg'); background-size: cover; height:100vh;">
     <div class="main">
         <div class="left">
-            <div class="cObject"><button class="restart" onclick="connect('','');document.getElementById('code').value = '';">Restart Gomoku</button></div>
+            <div class="cObject"><button onclick="connect('','');document.getElementById('code').value = '';">Restart Gomoku</button></div>
             <form name="input" style="padding-top: 10px;" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
                 <div class="text">Join code:</div>
                 <input id="code" name="code" type="text"/>
@@ -28,8 +27,8 @@
             <div class="lObject"><p id="turn" class="text"></p></div>
         </div>
         <div class="center">
-            <div class="svgBoard">
-                <svg id="board"></svg>
+            <div class="svg-board">
+                <svg id="board" style="background-image: url('../img/wood.jpg');"></svg>
             </div>
         </div>
         <div class="right">

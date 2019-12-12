@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
+
 html, body{
-   padding: 0;
-   margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .main {
@@ -9,9 +11,11 @@ html, body{
     justify-content: left;
     flex-direction: row;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     padding-top: 2%;
     padding-bottom: 2%;
+    background-image: url('./img/background.jpg');
+    background-size: cover;
 }
 
 
@@ -19,9 +23,9 @@ html, body{
     display: flex;
     justify-content: left;
     flex-direction: column;
-    width: 20%;
+    width: 18%;
     height: 100%;
-    padding-left: 1%;
+    padding-left: 2%;
 }
 
 .center {
@@ -54,24 +58,25 @@ html, body{
 }
 
 .text {
-    color: white;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 20px;
+    color: black;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 25px;
 }
 
-.restart {
-    background-color: darkgrey;
-    border-color: white;
+button {
+    background-color: #deccba;
+    border-color: black;
     border-width: 2px;
     border-radius: 20px;
     padding: 3px 36px ;
-    color: white;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 20px;
+    margin-bottom: 5%;
+    color: black;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 25px;
 }
 
-.restart:hover {
-  background-color: slategrey;
+button:hover {
+  background-color: #A8937D;
 }
 
 svg {
@@ -79,15 +84,9 @@ svg {
     width: 800px;
 }
 
-.svgBoard {
+.svg-board {
     display: flex;
     justify-content: center;
-}
-
-.an {
-    display: flex;
-    justify-content: center;
-    margin-top: 15px;
 }
 
 @media only screen and (max-width: 1330px) {
