@@ -7,6 +7,7 @@ html, body{
     height: 100vh;
     background-image: url('./img/background.jpg');
     background-size: cover;
+    overflow: visible;
 }
 
 .main {
@@ -18,13 +19,10 @@ html, body{
     height: 100%;
     padding-top: 2%;
     padding-bottom: 2%;
-    overflow-x: scroll;
-    overflow-y: scroll;
 }
 
 .left {
     display: flex;
-    justify-content: left;
     flex-direction: column;
     width: 18%;
     height: 100%;
@@ -33,7 +31,6 @@ html, body{
 
 .center {
     display: flex;
-    justify-content: top;
     flex-direction: column;
     width: 60%;
     height: 100%;
@@ -41,17 +38,17 @@ html, body{
 
 .right {
     display: flex;
-    justify-content: right;
     flex-direction: column;
     width: 20%;
     height: 100%;
-    padding-right: 1%;
+    padding-right: 2%;
 }
 
 .lObject {
-    display: flex;
+    display: block;
     justify-content: left;
     width: 100%;
+    padding-top: 5%;
 }
 
 .cObject {
@@ -63,7 +60,7 @@ html, body{
 .text {
     color: black;
     font-family: 'Montserrat', sans-serif;
-    font-size: 25px;
+    font-size: 24px;
 }
 
 button {
@@ -71,46 +68,47 @@ button {
     border-color: black;
     border-width: 2px;
     border-radius: 20px;
-    padding: 3px 36px ;
-    margin-bottom: 5%;
+    padding: 3px 24px ;
     color: black;
     font-family: 'Montserrat', sans-serif;
-    font-size: 25px;
 }
 
 button:hover {
-  background-color: #A8937D;
+    background-color: #A8937D;
 }
 
 svg {
-    height: 800px;
-    width: 800px;
-    overflow-x: scroll;
-    overflow-y: scroll;
+    height: 96%;
+    max-height: 800px;
+    width: 96%;
+    max-width: 800px;
+    background-image: url('../img/wood.jpg');
 }
 
-.svg-board {
-    display: flex;
-    justify-content: center;
-}
-
-@media only screen and (max-width: 1330px) {
+@media only screen and (max-width: 1439px) {
     .main {
         flex-direction: column;
     }
     .left {
-        justify-content: center;
+        height: auto;
         width: 100%
     }
     .center {
+        height: auto;
         width: 100%;
+        padding-top: 2%;
     }
     .right {
-        justify-content: center;
+        height: auto;
         width: 100%
     }
-    /* svg {
-        height: 100vw;
-        width: 100vw;
-        } */
+    .lObject {
+        display: inline-flex;
+        justify-content: center;
+        padding-top: 2%;
+    }
+    .rObject {
+        justify-content: center;
+        padding-top: 2%;
+    }
 }
