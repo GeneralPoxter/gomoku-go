@@ -71,6 +71,7 @@ button {
     padding: 3px 24px;
     color: black;
     font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
 }
 
 button:hover {
