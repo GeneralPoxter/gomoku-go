@@ -27,7 +27,7 @@ html, body {
     display: flex;
     flex-direction: column;
     justify-content: left;
-    width: 18%;
+    width: 20%;
     height: 100%;
 }
 
@@ -43,7 +43,7 @@ html, body {
     display: flex;
     flex-direction: column;
     justify-content: right;
-    width: 18%;
+    width: 20%;
     height: 100%;
 }
 
