@@ -50,6 +50,7 @@ html, body {
 .lObject {
     display: block;
     justify-content: left;
+    align-content: left;
     width: 100%;
     padding-top: 5%;
 }
@@ -57,12 +58,14 @@ html, body {
 .cObject {
     display: flex;
     justify-content: center;
+    align-content: center;
     width: 100%;
 }
 
 .rObject {
     display: block;
     justify-content: right;
+    align-content: right;
     width: 100%;
 }
 
@@ -118,6 +121,7 @@ svg {
     .lObject {
         display: inline-flex;
         justify-content: center;
+        align-content: center;
         padding-top: 2%;
     }
     .cObject {
@@ -125,6 +129,7 @@ svg {
     }
     .rObject {
         justify-content: center;
+        align-content: center;
         padding-top: 2%;
     }
 }
