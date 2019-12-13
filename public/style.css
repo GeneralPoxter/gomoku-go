@@ -120,6 +120,9 @@ svg {
         justify-content: center;
         padding-top: 2%;
     }
+    .cObject {
+        display: inline-flex;
+    }
     .rObject {
         justify-content: center;
         padding-top: 2%;
