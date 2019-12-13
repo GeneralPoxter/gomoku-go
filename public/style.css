@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat&display=swap');
 
-html, body{
+html, body {
     padding: 0;
     margin: 0;
     width: 100vw;
@@ -68,7 +68,7 @@ button {
     border-color: black;
     border-width: 2px;
     border-radius: 20px;
-    padding: 3px 24px ;
+    padding: 3px 24px;
     color: black;
     font-family: 'Montserrat', sans-serif;
 }

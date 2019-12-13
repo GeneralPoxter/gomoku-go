@@ -3,9 +3,9 @@ class Game {
     // Constructor method
     constructor(type) {
         // Initialize fields
-        this.end = false;
-        this.color = 0;
         this.type = type;
+        this.color = 0;
+        this.end = false;
         this.pieces = [];
         for (var r = 0; r < 21; r++) {
             this.pieces.push(Array(21).fill(0));
@@ -18,7 +18,7 @@ class Game {
         this.turn.innerText = "Black's turn";
     }
 
-     // Add piece to board
+    // Add piece to board
     addPiece(p) {
         var piece = d3.select(p);
         if (piece.attr("fill") == "transparent" && !this.end) {
@@ -33,8 +33,7 @@ class Game {
             if (this.type == "gomoku" && this.checkGomoku()) {
                 this.end = true;
                 this.turn.innerText = ["Black", "White"][this.color] + " won\nPlease press restart";
-            }
-            else {
+            } else {
                 this.color = (this.color + 1) % 2;
                 this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
             }
@@ -44,7 +43,24 @@ class Game {
     // Check for 5 in a row
     checkGomoku() {
         // Array of possible orientations for 5 in a row
-        var dir = [[[1, 0], [-1, 0]], [[0, 1], [0, -1]], [[1, 1], [-1, -1]], [[1, -1], [-1, 1]]];
+        var dir = [
+            [
+                [1, 0],
+                [-1, 0]
+            ],
+            [
+                [0, 1],
+                [0, -1]
+            ],
+            [
+                [1, 1],
+                [-1, -1]
+            ],
+            [
+                [1, -1],
+                [-1, 1]
+            ]
+        ];
 
         for (var i = 0; i < 4; i++) {
             var line = 1;
@@ -64,7 +80,7 @@ class Game {
                 return true;
             }
         }
-        
+
         return false;
     }
 }

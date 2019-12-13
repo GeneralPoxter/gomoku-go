@@ -4,13 +4,14 @@ var board;
 var ws;
 
 // Start game
-function main(type, mode) {
+function main(mode, type) {
     board = new Board();
     if (mode == "local") {
         game = new Game(type);
-        board.render(game.pieces, function() {game.addPiece(this)});
-    }
-    else {
+        board.render(game.pieces, function() {
+            game.addPiece(this)
+        });
+    } else {
         ws.renderBoard();
     }
 }
@@ -19,15 +20,14 @@ function main(type, mode) {
 function connect(room, type) {
     if (ws != null) {
         if (ws.wsc.readyState < 2) {
-             ws.wsc.close();
+            ws.wsc.close();
         }
         ws = null;
     }
     if (room.length > 0) {
         ws = new WSManager(room, type);
-        main('gomoku', 'online');
-    }
-    else {
-        main('gomoku','local');
+        main('online', type);
+    } else {
+        main('local', type);
     }
 }

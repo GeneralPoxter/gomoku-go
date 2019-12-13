@@ -1,43 +1,40 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width">
-	<title>Go</title>
-	<link href="/style.css" rel="stylesheet" type="text/css" />
-	<link rel="shortcut icon" type="image/png" href="/img/Jasan-favicon.png"/>
-	
-	<script src="https://d3js.org/d3.v5.min.js"></script>
-    <script defer src="/src/WSManager.js"></script>
-    <script defer src="/src/Game.js"></script>
-    <script defer src="/src/Board.js"></script>
-	<script defer src="/src/main.js"></script>
-</head>
-
-<body onload="main('go','local');">
-    <div class="main">
-        <div class="left">
-            <div class="cObject"><button style="font-size: 24px;" onclick="connect('','');document.getElementById('code').value = '';">Restart Go</button></div>
-            <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'go');return false;">
-                <div class="text">Join code:</div>
-                <input id="code" name="code" type="text"/>
-            </form>
-            <div class="lObject">
-                <div id="status" class="text"></div>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title>Go</title>
+        <link href="/style.css" rel="stylesheet" type="text/css" />
+        <link rel="shortcut icon" type="image/png" href="/img/Jasan-favicon.png"/>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script defer src="/src/WSManager.js"></script>
+        <script defer src="/src/Game.js"></script>
+        <script defer src="/src/Board.js"></script>
+        <script defer src="/src/main.js"></script>
+    </head>
+    
+    <body onload="main('local', 'go');">
+        <div class="main">
+            <div class="left">
+                <div class="cObject"><button style="font-size: 24px;" onclick="connect('','');document.getElementById('code').value = '';">Restart Go</button></div>
+                <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'go');return false;">
+                    <div class="text">Join code:&nbsp;</div>
+                    <input id="code" name="code" type="text"/>
+                </form>
+                <div class="lObject">
+                    <div id="status" class="text"></div>
+                </div>
+                <div class="lObject">
+                    <div id="turn" class="text"></div>
+                </div>
             </div>
-            <div class="lObject">
-                <div id="turn" class="text"></div>
+            <div class="center">
+                <div class="cObject">
+                    <svg id="board" viewBox="0 0 800 800"></svg>
+                </div>
+            </div>
+            <div class="right">
             </div>
         </div>
-        <div class="center">
-            <div class="cObject">
-                <svg id="board" viewBox="0 0 800 800"></svg>
-            </div>
-        </div>
-        <div class="right">
-        </div>
-    </div>
-</body>
-
+    </body>
 </html>

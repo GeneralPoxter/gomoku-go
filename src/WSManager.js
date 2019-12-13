@@ -11,18 +11,22 @@ function connection(ws) {
         // Try-catch to prevent server from crashing
         try {
             // Parse incoming messages
-            var message = JSON.parse(e);
+            var msg = JSON.parse(e);
+            var id = msg.id;
+            var room = msg.room;
+            var type = msg.type;
+            var cmd = msg.cmd;
+            var val = msg.val;
 
             // Display incoming messages
-            console.log('received from %d: %s', message.id, message.msg);
+            console.log('from %d: %s %s', msg.id, cmd, val);
 
-            // Functionality for existing room
-            if (rooms.includes(message.room)) {
-                var i = rooms.indexOf(message.room);
+            // Functionality for existing room and accepted client
+            if (rooms.includes(room)) {
+                var i = rooms.indexOf(room);
 
-                // Functionality for accepted clients
-                if (games[i].includes(message.id) && games[i][2] == message.type) {
-                    var color = games[i].indexOf(message.id);
+                if (games[i].includes(id) && games[i][2] == type) {
+                    var color = games[i].indexOf(id);
 
                     // Find other client's ws
                     if (games[i][0] != null && games[i][1] != null) {
@@ -30,9 +34,9 @@ function connection(ws) {
                     }
 
                     // Functionality for moves
-                    if (color == games[i][3]) {
-                        // Format move
-                        var move = message.msg.split(' ');
+                    if (cmd == "move" && color == games[i][3]) {
+                        // Parse move
+                        var move = val.split(' ');
                         var r = parseInt(move[0], 10);
                         var c = parseInt(move[1], 10);
 
@@ -40,53 +44,53 @@ function connection(ws) {
                         if (boards.boards[i][r][c] == 0) {
                             // Update server and client boards
                             boards.updateBoard(i, color, r, c);
-                            ws.send(JSON.stringify(boards.boards[i]));
-                            otherWS.send(JSON.stringify(boards.boards[i]));
+                            send(ws, 'update', boards.boards[i]);
+                            send(otherWS, 'update', boards.boards[i]);
 
-                            // Check win
+                            // Check win and end game
                             if (boards.checkGomoku(i, color, r, c)) {
-                                ws.send("Win");
-                                otherWS.send("Lose");
+                                send(ws, 'end', "You won");
+                                send(otherWS, 'end', "You lost");
                                 games[i][3] = 2;
                             }
                             // Update turns
                             else {
                                 games[i][3] = (games[i][3] + 1) % 2;
                             }
-
                         }
                     }
+
+                    // Functionality for chatroom
+                    else if (message.cmd == "chat") {}
                 }
 
-                // Accept incoming client if available
-                else if ((games[i][0] == null || games[i][1] == null) && !(games[i].includes(message.id)) && games[i][2] == message.type) {
-                    if (message.msg.slice(0, 9) == "Connected") {
-                        // Assign color and ws
-                        var color = games[i].indexOf(null);
-                        games[i][color] = message.id;
-                        clients[message.id] = ws;
+                // Connect incoming client if room capacity available
+                else if ((games[i][0] == null || games[i][1] == null) && !(games[i].includes(id)) && games[i][2] == type) {
+                    // Assign color and ws
+                    var color = games[i].indexOf(null);
+                    games[i][color] = id;
+                    clients[id] = ws;
 
-                        // Find other client's ws
-                        var otherWS = clients[games[i][(color + 1) % 2]];
+                    // Find other client's ws
+                    var otherWS = clients[games[i][(color + 1) % 2]];
 
-                        // Set up if game has not started
-                        if (games[i][3] == -1) {
-                            otherWS.send("Opponent has connected");
-                            games[i][3] = 0;
-                        }
-
-                        // Update client if game has started
-                        else {
-                            ws.send(JSON.stringify(boards.boards[i]));
-                            otherWS.send("Opponent rejoined");
-                            games[i][3] -= 2;
-                        }
-
-                        // Send client updated information
-                        ws.send(color);
-                        ws.send("T" + games[i][3].toString(10));
-                        ws.send("Opponent has connected");
+                    // Set up if game has not started
+                    if (games[i][3] == -1) {
+                        send(otherWS, 'disp', "Opponent has connected");
+                        games[i][3] = 0;
                     }
+
+                    // Update client if game has started
+                    else {
+                        send(ws, 'update', boards.boards[i]);
+                        send(otherWS, 'disp', "Opponent rejoined");
+                        games[i][3] -= 2;
+                    }
+
+                    // Send client updated information
+                    send(ws, 'color', color);
+                    send(ws, 'turn', games[i][3]);
+                    send(ws, 'disp', "Opponent has connected");
                 }
 
                 // Disconnect incoming client if room capacity reached
@@ -95,29 +99,29 @@ function connection(ws) {
                 }
             }
 
-            // Functionality for new room and client
-            else if (message.room != null) {
+            // Connect incoming client and create new room
+            else if (room != null) {
                 // Create new room
-                rooms.push(message.room);
-                games.push([null, null, message.type, -1]);
+                rooms.push(room);
+                games.push([null, null, type, -1]);
                 boards.newBoard();
 
                 // Assign color and ws
                 var color = Math.floor(Math.random() * 2);
-                games[games.length - 1][color] = message.id;
-                clients[message.id] = ws;
+                games[games.length - 1][color] = id;
+                clients[id] = ws;
 
                 // Send client information
-                ws.send(color);
-                ws.send("T0");
-                ws.send("Room created");
+                send(ws, 'color', color);
+                send(ws, 'turn', 0);
+                send(ws, 'disp', "Room created");
             }
-        }
-        catch (error) {
+        } catch (error) {
             return;
         }
     });
 
+    // Functionality for client disconnect
     ws.on('close', function close(e) {
         // Find id
         var id;
@@ -127,11 +131,11 @@ function connection(ws) {
                 break;
             }
         }
-        
+
         // Find room
         for (var i = 0; i < games.length; i++) {
             if (games[i].includes(id)) {
-                console.log("received from %d: %s", id, "Disconnected from " + rooms[i]);
+                console.log("to %d: %s %s", id, 'disconnect', rooms[i]);
                 var color = games[i].indexOf(id);
 
                 // Find other client's ws
@@ -139,11 +143,10 @@ function connection(ws) {
                     var otherWS = clients[games[i][(color + 1) % 2]];
                 }
 
-                // Functionality for client disconnect
+                // Disconnect client
                 if (games[i][0] == id) {
                     games[i][0] = null;
-                }
-                else {
+                } else {
                     games[i][1] = null;
                 }
 
@@ -155,7 +158,7 @@ function connection(ws) {
                 }
                 // Inform other client that opponent disconnected
                 else {
-                    otherWS.send("Opponent disconnected");
+                    send(otherWS, 'disp', "Opponent disconnected");
                     games[i][3] += 2;
                 }
 
@@ -165,4 +168,14 @@ function connection(ws) {
         }
     });
 }
+
+// Send messages to client
+function send(ws, c, v) {
+    data = {
+        cmd: c,
+        val: v
+    };
+    ws.send(JSON.stringify(data));
+}
+
 module.exports = connection;

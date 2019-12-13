@@ -7,11 +7,19 @@ class WSManager {
         this.wsc.onclose = e => this.onClose();
         this.wsc.onerror = e => this.onError();
         this.wsc.onmessage = e => this.onMessage(e);
-        
+
         // Prepare data for ws handshakes
         this.id = Math.random();
+        this.room = room;
+        this.type = type;
         this.color;
-        this.data = {id:this.id, room:room, type:type, msg:""};
+        this.data = {
+            id: this.id,
+            room: this.room,
+            type: this.type,
+            cmd: '',
+            val: ""
+        };
 
         // Initialize board
         this.board = new Board();
@@ -27,8 +35,8 @@ class WSManager {
 
     // Server-client handshake
     onOpen() {
-        this.text.innerText = "Connecting to " + this.data.room;
-        this.send("Connected to " + this.data.room);
+        this.text.innerText = "Connecting to " + this.room;
+        this.send('connect', this.room);
     }
 
     // Connection closed
@@ -48,57 +56,57 @@ class WSManager {
 
     // Receive messages from server
     onMessage(e) {
-        var message = e.data;
-        console.log(message);
+        var msg = JSON.parse(e.data);
+        var cmd = msg.cmd;
+        var val = msg.val;
 
-        // Server assigns color, display status
-        if (message == 0 || message == 1) {
-            this.color = message;
-            this.text.innerText = "Online game\nColor is " + ["black","white"][this.color];
+        // Server assigns color
+        if (cmd == "color") {
+            this.color = val;
+            this.text.innerText = "Online game\nColor is " + ["black", "white"][this.color];
         }
 
         // Server gives the current turn
-        else if (message[0] == "T") {
-            this.turn.innerText = ["Black", "White"][parseInt(message[1])] + "'s turn";
+        else if (cmd == "turn") {
+            this.turn.innerText = ["Black", "White"][val] + "'s turn";
         }
 
         // Server updates board
-        else if (message[0] == "[") {
-            this.updateBoard(JSON.parse(message));
+        else if (cmd == "update") {
+            this.updateBoard(val);
             if (this.turn.innerText == "Black's turn") {
                 this.turn.innerText = "White's turn";
-            }
-            else {
+            } else {
                 this.turn.innerText = "Black's turn";
             }
         }
 
-        // Server claims a win
-        else if (message == "Win" || message == "Lose") {
-            if (message == "Win") {
-                this.turn.innerText = "You won\nPlease press restart";
-            }
-            else {
-                this.turn.innerText = "You lost\nPlease press restart";
-            }
+        // Server ends game
+        else if (cmd == "end") {
+            this.text.innerText = "Online game\nColor is " + ["black", "white"][this.color];
+            this.turn.innerText = val + "\nPlease press restart";
         }
 
         // Server wants client to display message
-        else {
-            this.text.innerText = "Online game\nColor is " + ["black","white"][this.color] + "\n" + message;
+        else if (cmd == "disp") {
+            this.text.innerText = "Online game\nColor is " + ["black", "white"][this.color] + "\n" + val;
         }
     }
 
     // Send messages to server
-    send(message) {
-        this.data.msg = message;
+    send(cmd, val) {
+        this.data.cmd = cmd;
+        this.data.val = val;
         this.wsc.send(JSON.stringify(this.data));
     }
 
     // Render board
     renderBoard() {
         var cur = this;
-        board.render(this.pieces, function(){var piece = d3.select(this); cur.send((piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40))});
+        board.render(this.pieces, function() {
+            var piece = d3.select(this);
+            cur.send('move', (piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40));
+        });
     }
 
     // Update board

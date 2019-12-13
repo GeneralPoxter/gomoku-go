@@ -49,4 +49,5 @@ class BoardManager {
     }
 
 }
+
 module.exports = BoardManager;

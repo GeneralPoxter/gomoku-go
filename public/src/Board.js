@@ -9,7 +9,7 @@ class Board {
     // Render board and pieces
     render(pieces, func) {
         // Clear board
-        this.board.selectAll("circle").remove();
+        this.board.selectAll("*").remove();
 
         for (var y = 0; y < 800; y += 40) {
             for (var x = 0; x < 800; x += 40) {
