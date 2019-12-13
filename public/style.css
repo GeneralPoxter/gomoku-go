@@ -128,4 +128,7 @@ svg {
         justify-content: center;
         padding-top: 2%;
     }
+    .text {
+        text-align: center;
+    }
 }
