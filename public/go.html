@@ -13,10 +13,10 @@
         <script defer src="/src/main.js"></script>
     </head>
     
-    <body onload="main('local', 'go');">
+    <body onload="main('local', 'go');" onbeforeunload="connect('',''); return null;">
         <div class="main">
             <div class="left">
-                <div class="cObject"><button style="font-size: 24px;" onclick="connect('','');document.getElementById('code').value = '';">Restart Go</button></div>
+                <div class="cObject"><button style="font-size: 24px;" onclick="connect('',''); document.getElementById('code').value = '';">Restart Go</button></div>
                 <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'go');return false;">
                     <div class="text">Join code:&nbsp;</div>
                     <input id="code" name="code" type="text"/>
