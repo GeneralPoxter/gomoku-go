@@ -1,11 +1,11 @@
 // Game manager class
 class Game {
     // Constructor method
-    constructor(mode) {
+    constructor(type) {
         // Initialize fields
         this.end = false;
         this.color = 0;
-        this.mode = mode;
+        this.type = type;
         this.pieces = [];
         for (var r = 0; r < 21; r++) {
             this.pieces.push(Array(21).fill(0));
@@ -30,7 +30,7 @@ class Game {
             this.pieces[this.r][this.c] = this.color + 1;
 
             // Check move and update color and turn
-            if (this.mode == "gomoku" && this.checkGomoku()) {
+            if (this.type == "gomoku" && this.checkGomoku()) {
                 this.end = true;
                 this.turn.innerText = ["Black", "White"][this.color] + " won\nPlease press restart";
             }

@@ -7,7 +7,7 @@ var ws;
 function main(type, mode) {
     board = new Board();
     if (mode == "local") {
-        game = new Game("gomoku");
+        game = new Game(type);
         board.render(game.pieces, function() {game.addPiece(this)});
     }
     else {
