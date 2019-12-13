@@ -25,7 +25,7 @@ function connect(room, type) {
         ws = null;
     }
     if (room.length > 0) {
-        ws = new WSManager(room, type);
+        ws = new WSCManager(room, type);
         main('online', type);
     } else {
         main('local', type);

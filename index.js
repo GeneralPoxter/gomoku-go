@@ -1,4 +1,4 @@
-// Server
+// Server setup
 // Code from https://devcenter.heroku.com/articles/node-websockets
 const express = require('express');
 const {
@@ -22,7 +22,7 @@ const server = express()
 const wss = new Server({
     server
 });
-const connection = require("./src/WSManager.js");
+const connection = require("./src/WSSManager.js");
 
 wss.on('connection', connection);
 

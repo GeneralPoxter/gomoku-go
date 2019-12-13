@@ -1,4 +1,4 @@
-// Game manager class
+// Local game manager
 class Game {
     // Constructor method
     constructor(type) {

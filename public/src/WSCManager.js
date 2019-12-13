@@ -1,5 +1,5 @@
 // Handles WebSocket client-side relations with server
-class WSManager {
+class WSCManager {
     constructor(room, type) {
         // wsc = WebSocket client
         this.wsc = new WebSocket(location.origin.replace(/^http/, 'ws'));
