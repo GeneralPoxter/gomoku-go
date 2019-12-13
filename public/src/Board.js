@@ -4,9 +4,6 @@ class Board {
     constructor() {
         // Initialize fields
         this.board = d3.select("#board");
-
-        // Set up board
-        // document.getElementById("board").style.backgroundImage = url('../img/background.jpg'); // #fce195
     }
 
     // Render board and pieces

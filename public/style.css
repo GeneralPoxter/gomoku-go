@@ -5,7 +5,7 @@ html, body{
     margin: 0;
     width: 100vw;
     height: 100vh;
-    background-image: url('./img/background.jpg');
+    background-image: url('/img/background.jpg');
     background-size: cover;
     overflow: visible;
 }
@@ -82,7 +82,7 @@ svg {
     max-height: 800px;
     width: 96%;
     max-width: 800px;
-    background-image: url('../img/wood.jpg');
+    background-image: url('/img/wood.jpg');
 }
 
 @media only screen and (max-width: 1439px) {
