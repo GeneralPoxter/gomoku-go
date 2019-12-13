@@ -55,7 +55,7 @@ html, body {
 }
 
 .cObject {
-    display: block;
+    display: flex;
     justify-content: center;
     width: 100%;
 }
