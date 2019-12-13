@@ -6,6 +6,7 @@ html, body {
     width: 100vw;
     height: 100vh;
     background-image: url('/img/background.jpg');
+    background-repeat: no-repeat;
     background-size: cover;
     overflow: visible;
 }
@@ -32,8 +33,7 @@ html, body {
 }
 
 .center {
-    display: flex;
-    flex-direction: column;
+    display: block;
     justify-content: center;
     width: 60%;
     height: 100%;
@@ -50,7 +50,6 @@ html, body {
 .lObject {
     display: block;
     justify-content: left;
-    align-content: left;
     width: 100%;
     padding-top: 5%;
 }
@@ -58,14 +57,12 @@ html, body {
 .cObject {
     display: flex;
     justify-content: center;
-    align-content: center;
     width: 100%;
 }
 
 .rObject {
     display: block;
     justify-content: right;
-    align-content: right;
     width: 100%;
 }
 
@@ -93,12 +90,14 @@ button:hover {
 svg {
     height: 96%;
     max-height: 800px;
-    width: 96%;
+    width: 75%;
     max-width: 800px;
     background-image: url('/img/wood.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-@media only screen and (max-width: 1439px) {
+@media only screen and (max-width: 1320px) {
     .main {
         flex-direction: column;
     }
@@ -121,7 +120,6 @@ svg {
     .lObject {
         display: inline-flex;
         justify-content: center;
-        align-content: center;
         padding-top: 2%;
     }
     .cObject {
@@ -129,7 +127,6 @@ svg {
     }
     .rObject {
         justify-content: center;
-        align-content: center;
         padding-top: 2%;
     }
 }
