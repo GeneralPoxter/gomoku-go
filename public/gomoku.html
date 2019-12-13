@@ -16,7 +16,7 @@
     <body onload="main('local', 'gomoku');" onbeforeunload="connect('',''); return null;">
         <div class="main">
             <div class="left">
-                <div class="cObject"><button style="font-size: 24px;" onclick="connect('',''); document.getElementById('code').value = '';">Restart Gomoku</button></div>
+                <div class="cObject"><button style="font-size: 24px;" onclick="connect('','gomoku'); document.getElementById('code').value = '';">Restart Gomoku</button></div>
                 <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
                     <div class="text">Join code:&nbsp;</div>
                     <input id="code" name="code" type="text"/>

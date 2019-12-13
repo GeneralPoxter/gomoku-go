@@ -43,24 +43,7 @@ class Game {
     // Check for 5 in a row
     checkGomoku() {
         // Array of possible orientations for 5 in a row
-        var dir = [
-            [
-                [1, 0],
-                [-1, 0]
-            ],
-            [
-                [0, 1],
-                [0, -1]
-            ],
-            [
-                [1, 1],
-                [-1, -1]
-            ],
-            [
-                [1, -1],
-                [-1, 1]
-            ]
-        ];
+        var dir = [[[1, 0], [-1, 0]], [[0, 1], [0, -1]], [[1, 1], [-1, -1]], [[1, -1], [-1, 1]]];
 
         for (var i = 0; i < 4; i++) {
             var line = 1;
