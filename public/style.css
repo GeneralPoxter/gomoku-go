@@ -55,8 +55,14 @@ html, body {
 }
 
 .cObject {
-    display: flex;
+    display: block;
     justify-content: center;
+    width: 100%;
+}
+
+.rObject {
+    display: block;
+    justify-content: right;
     width: 100%;
 }
 
