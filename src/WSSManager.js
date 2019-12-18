@@ -100,7 +100,7 @@ function connection(ws) {
             }
 
             // Connect incoming client and create new room
-            else if (room != null) {
+            else if (room != null && (type == "gomoku" || type == "go")) {
                 // Create new room
                 rooms.push(room);
                 games.push([null, null, type, -1]);
