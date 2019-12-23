@@ -1,10 +1,9 @@
 // Handles WebSocket server-side relations with client
 const BoardManager = require("./BoardManager.js");
-const boards = new BoardManager();
 var clients = {};
-var rooms = [];
-// Each game: [client (black player), client (white player), game type, turn color]
-var games = [];
+// Each game: {room name: [client (black player), client (white player), game type, turn color]}
+var games = {};
+var boards = {};
 
 function connection(ws) {
     ws.on('message', function incoming(e) {
@@ -22,74 +21,72 @@ function connection(ws) {
             console.log('from %d: %s %s', msg.id, cmd, val);
 
             // Functionality for existing room and accepted client
-            if (rooms.includes(room)) {
-                var i = rooms.indexOf(room);
-
-                if (games[i].includes(id) && games[i][2] == type) {
-                    var color = games[i].indexOf(id);
+            if (games[room] != null) {
+                if (games[room].includes(id) && games[room][2] == type) {
+                    var color = games[room].indexOf(id);
 
                     // Find other client's ws
-                    if (games[i][0] != null && games[i][1] != null) {
-                        var otherWS = clients[games[i][(color + 1) % 2]];
+                    if (games[room][0] != null && games[room][1] != null) {
+                        var otherWS = clients[games[room][(color + 1) % 2]];
                     }
 
                     // Functionality for moves
-                    if (cmd == "move" && color == games[i][3]) {
+                    if (cmd == "move" && color == games[room][3]) {
                         // Parse move
                         var move = val.split(' ');
                         var r = parseInt(move[0], 10);
                         var c = parseInt(move[1], 10);
 
                         // Check if the move is valid
-                        if (boards.boards[i][r][c] == 0) {
+                        if (boards[room].pieces[r][c] == 0) {
                             // Update server and client boards
-                            boards.updateBoard(i, color, r, c);
-                            send(ws, 'update', boards.boards[i]);
-                            send(otherWS, 'update', boards.boards[i]);
+                            boards[room].updateBoard(r, c, color);
+                            send(ws, 'update', boards[room].pieces);
+                            send(otherWS, 'update', boards[room].pieces);
 
                             // Check win and end game
-                            if (boards.checkGomoku(i, color, r, c)) {
+                            if (boards[room].checkGomoku(r, c, color)) {
                                 send(ws, 'end', "You won");
                                 send(otherWS, 'end', "You lost");
-                                games[i][3] = 2;
+                                games[room][3] = 2;
                             }
                             // Update turns
                             else {
-                                games[i][3] = (games[i][3] + 1) % 2;
+                                games[room][3] = (games[room][3] + 1) % 2;
                             }
                         }
                     }
 
                     // Functionality for chatroom
-                    else if (message.cmd == "chat") {}
+                    else if (cmd == "chat") {}
                 }
 
                 // Connect incoming client if room capacity available
-                else if ((games[i][0] == null || games[i][1] == null) && !(games[i].includes(id)) && games[i][2] == type) {
+                else if ((games[room][0] == null || games[room][1] == null) && !(games[room].includes(id)) && games[room][2] == type) {
                     // Assign color and ws
-                    var color = games[i].indexOf(null);
-                    games[i][color] = id;
+                    var color = games[room].indexOf(null);
+                    games[room][color] = id;
                     clients[id] = ws;
 
                     // Find other client's ws
-                    var otherWS = clients[games[i][(color + 1) % 2]];
+                    var otherWS = clients[games[room][(color + 1) % 2]];
 
                     // Set up if game has not started
-                    if (games[i][3] == -1) {
+                    if (games[room][3] == -1) {
                         send(otherWS, 'disp', "Opponent has connected");
-                        games[i][3] = 0;
+                        games[room][3] = 0;
                     }
 
                     // Update client if game has started
                     else {
-                        send(ws, 'update', boards.boards[i]);
+                        send(ws, 'update', boards[room].pieces);
                         send(otherWS, 'disp', "Opponent rejoined");
-                        games[i][3] -= 2;
+                        games[room][3] -= 2;
                     }
 
                     // Send client updated information
                     send(ws, 'color', color);
-                    send(ws, 'turn', games[i][3]);
+                    send(ws, 'turn', games[room][3]);
                     send(ws, 'disp', "Opponent has connected");
                 }
 
@@ -102,13 +99,12 @@ function connection(ws) {
             // Connect incoming client and create new room
             else if (room != null && (type == "gomoku" || type == "go")) {
                 // Create new room
-                rooms.push(room);
-                games.push([null, null, type, -1]);
-                boards.newBoard();
+                games[room] = [null, null, type, -1];
+                boards[room] = new BoardManager();
 
                 // Assign color and ws
                 var color = Math.floor(Math.random() * 2);
-                games[games.length - 1][color] = id;
+                games[room][color] = id;
                 clients[id] = ws;
 
                 // Send client information
@@ -117,6 +113,7 @@ function connection(ws) {
                 send(ws, 'disp', "Room created");
             }
         } catch (error) {
+            console.log(error);
             return;
         }
     });
@@ -133,33 +130,34 @@ function connection(ws) {
         }
 
         // Find room
-        for (var i = 0; i < games.length; i++) {
-            if (games[i].includes(id)) {
-                console.log("to %d: %s %s", id, 'disconnect', rooms[i]);
-                var color = games[i].indexOf(id);
+        var rooms = Object.keys(games);
+        for (var i = 0; i < rooms.length; i++) {
+            if (games[rooms[i]].includes(id)) {
+                var room = rooms[i];
+                console.log("to %d: %s %s", id, 'disconnect', room);
+                var color = games[room].indexOf(id);
 
                 // Find other client's ws
-                if (games[i][0] != null && games[i][1] != null) {
-                    var otherWS = clients[games[i][(color + 1) % 2]];
+                if (games[room][0] != null && games[room][1] != null) {
+                    var otherWS = clients[games[room][(color + 1) % 2]];
                 }
 
                 // Disconnect client
-                if (games[i][0] == id) {
-                    games[i][0] = null;
+                if (games[room][0] == id) {
+                    games[room][0] = null;
                 } else {
-                    games[i][1] = null;
+                    games[room][1] = null;
                 }
 
                 // Delete room if both clients disconnect
-                if (games[i][0] == null && games[i][1] == null) {
-                    rooms.splice(i, 1);
-                    games.splice(i, 1);
-                    boards.deleteBoard(i);
+                if (games[room][0] == null && games[room][1] == null) {
+                    delete games[room];
+                    delete boards[room];
                 }
                 // Inform other client that opponent disconnected
                 else {
                     send(otherWS, 'disp', "Opponent disconnected");
-                    games[i][3] += 2;
+                    games[room][3] += 2;
                 }
 
                 return;

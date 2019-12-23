@@ -6,10 +6,15 @@ class Game {
         this.type = type;
         this.color = 0;
         this.end = false;
+
+        // Initialize board
+        this.board = new Board();
         this.pieces = [];
-        for (var r = 0; r < 21; r++) {
-            this.pieces.push(Array(21).fill(0));
+        this.pieces.push(Array(21).fill(9));
+        for (var r = 0; r < 19; r++) {
+            this.pieces.push([9].concat(Array(19).fill(0), [9]));
         }
+        this.pieces.push(Array(21).fill(9));
 
         // Set up HTML
         this.text = document.getElementById("status");
@@ -21,13 +26,17 @@ class Game {
     // Add piece to board
     addPiece(p) {
         var piece = d3.select(p);
-        if (piece.attr("fill") == "transparent" && !this.end) {
-            // Change piece color from transparent, add piece to array pieces
-            this.r = piece.attr("cy") / 40;
-            this.c = piece.attr("cx") / 40;
-            piece.attr("fill", "#" + (0xffffff * this.color).toString(16));
-            piece.attr("stroke", "#808080");
+        this.r = piece.attr("cy") / 40;
+        this.c = piece.attr("cx") / 40;
+
+        // Check valid move
+        if (this.pieces[this.r][this.c] == 0 && !this.end) {
+            // Add piece to array pieces
             this.pieces[this.r][this.c] = this.color + 1;
+
+            if (this.type == "go") {
+                this.checkCapture();
+            }
 
             // Check move and update color and turn
             if (this.type == "gomoku" && this.checkGomoku()) {
@@ -37,6 +46,9 @@ class Game {
                 this.color = (this.color + 1) % 2;
                 this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
             }
+
+            // Update board
+            this.renderBoard();
         }
     }
 
@@ -66,4 +78,86 @@ class Game {
 
         return false;
     }
+
+    // Check captures in position and all orthogonal direction, prioritizing enemy color
+    checkCapture() {
+        var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        var checks = [];
+
+        checks.push([this.color + 1, this.r, this.c]);
+        for (var i = 0; i < 4; i++) {
+            var adjR = this.r + dir[i][0];
+            var adjC = this.c + dir[i][1];
+            var adjColor = this.pieces[adjR][adjC];
+            if (adjColor == 1 || adjColor == 2) {
+                checks.push([adjColor, adjR, adjC]);
+            }
+        }
+
+        // Prioritize the checking queue
+        checks.sort((a, b) => {if (this.color == 0) { return b - a; } return a - b; });
+
+        for (var i = 0; i < checks.length; i++) {
+            // Visited array to prevent overflow
+            this.visited = []
+            for (var j = 0; j < 21; j++) {
+                this.visited.push(Array(21).fill(0));
+            }
+
+            // Check the piece
+            if (!this.hasLiberties(checks[i][1], checks[i][2], checks[i][0])) {
+                // Finalize the capture
+                this.replace(3, 0);
+            }
+        }
+    }
+
+    // Check for liberties
+    hasLiberties(r, c, color) {
+        var piece = this.pieces[r][c];
+        var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+        this.visited[r][c] = 1;
+
+        if (piece == 0) {
+            return true;
+        }
+
+        if (piece != color) {
+            return false;
+        }
+
+        for (var i = 0; i < 4; i++) {
+            var adjR = r + dir[i][0];
+            var adjC = c + dir[i][1];
+            if (!this.visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color)) {
+                // Remove tentative mark
+                this.replace(3, color);
+                return true;
+            }
+        }
+
+        // Tentatively marked for capture
+        this.pieces[r][c] = 3;
+        return false;
+    }
+
+    // Render board
+    renderBoard() {
+        var cur = this;
+        this.board.render(this.pieces, function () {
+            cur.addPiece(this);
+        });
+    }
+
+    // Replace all instance of i in the playable board with j
+    replace(i, j) {
+        for (var r = 1; r < 20; r++) {
+            for (var c = 1; c < 20; c++) {
+                if (this.pieces[r][c] == i) {
+                    this.pieces[r][c] = j;
+                }
+            }
+        }
+    }
+
 }

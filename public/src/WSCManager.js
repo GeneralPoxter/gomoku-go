@@ -103,7 +103,7 @@ class WSCManager {
     // Render board
     renderBoard() {
         var cur = this;
-        board.render(this.pieces, function() {
+        this.board.render(this.pieces, function() {
             var piece = d3.select(this);
             cur.send('move', (piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40));
         });

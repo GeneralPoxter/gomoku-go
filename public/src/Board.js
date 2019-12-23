@@ -36,7 +36,7 @@ class Board {
                         .on("click", func);
                     var r = circ.attr("cy") / 40;
                     var c = circ.attr("cx") / 40;
-                    if (pieces[r][c] != 0) {
+                    if (pieces[r][c] == 1 || pieces[r][c] == 2) {
                         circ.attr("fill", "#" + (0xffffff * (pieces[r][c] - 1)).toString(16));
                     }
                 }

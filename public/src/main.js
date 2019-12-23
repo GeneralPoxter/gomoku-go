@@ -1,6 +1,5 @@
 // Initialize fields
 var game;
-var board;
 var ws;
 
 // Start game
@@ -8,9 +7,7 @@ function main(mode, type) {
     board = new Board();
     if (mode == "local") {
         game = new Game(type);
-        board.render(game.pieces, function() {
-            game.addPiece(this)
-        });
+        game.renderBoard();
     } else {
         ws.renderBoard();
     }
