@@ -5,6 +5,7 @@ class Game {
         // Initialize fields
         this.type = type;
         this.color = 0;
+        this.passes = 0;
         this.end = false;
 
         // Initialize board
@@ -35,6 +36,7 @@ class Game {
             this.pieces[this.r][this.c] = this.color + 1;
 
             if (this.type == "go") {
+                this.passes = 0;
                 this.checkCapture();
             }
 
@@ -90,12 +92,12 @@ class Game {
             var adjC = this.c + dir[i][1];
             var adjColor = this.pieces[adjR][adjC];
             if (adjColor == 1 || adjColor == 2) {
-                checks.push([adjColor, adjR, adjC]);
+                checks.push([adjR, adjC, adjColor]);
             }
         }
 
         // Prioritize the checking queue
-        checks.sort((a, b) => {if (this.color == 0) { return b - a; } return a - b; });
+        checks.sort((a, b) => {if (this.color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
 
         for (var i = 0; i < checks.length; i++) {
             // Visited array to prevent overflow
@@ -105,7 +107,7 @@ class Game {
             }
 
             // Check the piece
-            if (!this.hasLiberties(checks[i][1], checks[i][2], checks[i][0])) {
+            if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2])) {
                 // Finalize the capture
                 this.replace(3, 0);
             }
@@ -139,6 +141,18 @@ class Game {
         // Tentatively marked for capture
         this.pieces[r][c] = 3;
         return false;
+    }
+
+    // Pass functionality
+    pass() {
+        this.passes ++;
+        this.color = (this.color + 1) % 2;
+        this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
+        
+        if (this.passes == 2) {
+            this.end = true;
+            this.turn.innerText = "Game has ended\nPlease press restart";
+        }
     }
 
     // Render board

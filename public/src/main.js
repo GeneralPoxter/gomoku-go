@@ -28,3 +28,13 @@ function connect(room, type) {
         main('local', type);
     }
 }
+
+// Pass functionaliy
+function pass() {
+    if (ws != null && ws.type == "go") {
+        ws.send('move', "pass");
+    }
+    else if (game.type == "go") {
+        game.pass();
+    }
+}

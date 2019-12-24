@@ -1,7 +1,7 @@
 // Handles WebSocket server-side relations with client
 const BoardManager = require("./BoardManager.js");
 var clients = {};
-// Each game: {room name: [client (black player), client (white player), game type, turn color]}
+// Each game: { room name: [client (black player), client (white player), game type, turn color] }
 var games = {};
 var boards = {};
 
@@ -32,6 +32,21 @@ function connection(ws) {
 
                     // Functionality for moves
                     if (cmd == "move" && color == games[room][3]) {
+
+                        if (val == "pass" && type == "go") {
+                            boards[room].passes ++;
+                            games[room][3] = (games[room][3] + 1) % 2;
+                            send(ws, 'update', boards[room].pieces);
+                            send(otherWS, 'update', boards[room].pieces);
+                            
+                            if (boards[room].passes == 2) {
+                                send(ws, 'end', "Game has ended");
+                                send(otherWS, 'end', "Game has ended");
+                                games[room][3] = 2;
+                            }
+                            return;
+                        }
+
                         // Parse move
                         var move = val.split(' ');
                         var r = parseInt(move[0], 10);
@@ -41,28 +56,39 @@ function connection(ws) {
                         if (boards[room].pieces[r][c] == 0) {
                             // Update server and client boards
                             boards[room].updateBoard(r, c, color);
-                            send(ws, 'update', boards[room].pieces);
-                            send(otherWS, 'update', boards[room].pieces);
 
-                            // Check win and end game
-                            if (boards[room].checkGomoku(r, c, color)) {
-                                send(ws, 'end', "You won");
-                                send(otherWS, 'end', "You lost");
-                                games[room][3] = 2;
-                            }
-                            // Update turns
-                            else {
-                                games[room][3] = (games[room][3] + 1) % 2;
+                            if (type == "gomoku") {
+                                // Check win and end game
+                                if (boards[room].checkGomoku(r, c, color)) {
+                                    send(ws, 'end', "You won");
+                                    send(otherWS, 'end', "You lost");
+                                    games[room][3] = 2;
+                                    return;
+                                }
+                            } else {
+                                // Check captures
+                                boards[room].checkCapture(r, c, color);
+                                boards[room].passes = 0;
                             }
                         }
+
+                        // Update turn and client boards
+                        games[room][3] = (games[room][3] + 1) % 2;
+                        send(ws, 'update', boards[room].pieces);
+                        send(otherWS, 'update', boards[room].pieces);
+                        return;
                     }
 
                     // Functionality for chatroom
-                    else if (cmd == "chat") {}
+                    if (cmd == "chat") {
+                        return;
+                    }
+
+                    return;
                 }
 
                 // Connect incoming client if room capacity available
-                else if ((games[room][0] == null || games[room][1] == null) && !(games[room].includes(id)) && games[room][2] == type) {
+                if ((games[room][0] == null || games[room][1] == null) && !games[room].includes(id) && games[room][2] == type) {
                     // Assign color and ws
                     var color = games[room].indexOf(null);
                     games[room][color] = id;
@@ -88,16 +114,16 @@ function connection(ws) {
                     send(ws, 'color', color);
                     send(ws, 'turn', games[room][3]);
                     send(ws, 'disp', "Opponent has connected");
+                    return;
                 }
-
+                
                 // Disconnect incoming client if room capacity reached
-                else {
-                    ws.close();
-                }
+                ws.close();
+                return;
             }
 
             // Connect incoming client and create new room
-            else if (room != null && (type == "gomoku" || type == "go")) {
+            if (room != null && (type == "gomoku" || type == "go")) {
                 // Create new room
                 games[room] = [null, null, type, -1];
                 boards[room] = new BoardManager();
@@ -111,6 +137,7 @@ function connection(ws) {
                 send(ws, 'color', color);
                 send(ws, 'turn', 0);
                 send(ws, 'disp', "Room created");
+                return;
             }
         } catch (error) {
             console.log(error);

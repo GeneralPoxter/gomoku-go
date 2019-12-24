@@ -7,6 +7,7 @@ class BoardManager {
             this.pieces.push([9].concat(Array(19).fill(0), [9]));
         }
         this.pieces.push(Array(21).fill(9));
+        this.passes = 0;
         this.started = false;
     }
 
@@ -43,22 +44,22 @@ class BoardManager {
     }
 
     // Check captures in position and all orthogonal direction, prioritizing enemy color
-    checkCapture(board, color, r, c) {
+    checkCapture(r, c, color) {
         var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
         var checks = [];
 
-        checks.push([color + 1, r, c]);
+        checks.push([color, r, c]);
         for (var i = 0; i < 4; i++) {
             var adjR = r + dir[i][0];
             var adjC = c + dir[i][1];
             var adjColor = this.pieces[adjR][adjC];
             if (adjColor == 1 || adjColor == 2) {
-                checks.push([adjColor, adjR, adjC]);
+                checks.push([adjR, adjC, adjColor]);
             }
         }
 
         // Prioritize the checking queue
-        checks.sort((a, b) => {if (color == 0) { return b - a; } return a - b; });
+        checks.sort((a, b) => {if (color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
 
         for (var i = 0; i < checks.length; i++) {
             // Visited array to prevent overflow
@@ -68,7 +69,7 @@ class BoardManager {
             }
 
             // Check the piece
-            if (!this.hasLiberties(checks[i][1], checks[i][2], checks[i][0])) {
+            if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2])) {
                 // Finalize the capture
                 this.replace(3, 0);
             }
