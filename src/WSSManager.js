@@ -57,19 +57,29 @@ function connection(ws) {
                             // Update server and client boards
                             boards[room].updateBoard(r, c, color);
 
-                            if (type == "gomoku") {
-                                // Check win and end game
-                                if (boards[room].checkGomoku(r, c, color)) {
-                                    send(ws, 'end', "You won");
-                                    send(otherWS, 'end', "You lost");
-                                    games[room][3] = 2;
-                                    return;
-                                }
-                            } else {
+                            if (type == "go") {
                                 // Check captures
                                 boards[room].checkCapture(r, c, color);
                                 boards[room].passes = 0;
                             }
+
+                            // Update turn and client boards
+                            games[room][3] = (games[room][3] + 1) % 2;
+                            send(ws, 'update', boards[room].pieces);
+                            send(otherWS, 'update', boards[room].pieces);
+
+                            if (type == "gomoku") {
+                                // Check win and end game
+                                if (boards[room].checkGomoku(r, c, color)) {
+                                    games[room][3] = 2;
+                                    send(ws, 'end', "You won");
+                                    send(otherWS, 'end', "You lost");
+                                }
+                            } else {
+                                // Todo
+                            }
+                            
+                            return;
                         }
 
                         // Update turn and client boards
