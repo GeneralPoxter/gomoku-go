@@ -35,22 +35,29 @@ class Game {
             // Add piece to array pieces
             this.pieces[this.r][this.c] = this.color + 1;
 
-            if (this.type == "go") {
+            // Check captures
+            if (this.type == "go" && this.checkCapture()) {
                 this.passes = 0;
-                this.checkCapture();
+            }
+            else {
+                return;
             }
 
-            // Check move and update color and turn
-            if (this.type == "gomoku" && this.checkGomoku()) {
-                this.end = true;
-                this.turn.innerText = ["Black", "White"][this.color] + " won\nPlease press restart";
-            } else {
-                this.color = (this.color + 1) % 2;
-                this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
-            }
-
-            // Update board
+            // Update turns and board
+            this.color = (this.color + 1) % 2;
+            this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
             this.renderBoard();
+
+            // Check win cases
+            if (this.type == "gomoku") {
+                if (this.checkGomoku()) {
+                    this.end = true;
+                    this.turn.innerText = ["Black", "White"][this.color] + " won\nPlease press restart";
+                }
+            } else {
+                // Todo
+            }
+
         }
     }
 
@@ -86,7 +93,7 @@ class Game {
         var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
         var checks = [];
 
-        checks.push([this.color + 1, this.r, this.c]);
+        checks.push([this.r, this.c, this.color + 1]);
         for (var i = 0; i < 4; i++) {
             var adjR = this.r + dir[i][0];
             var adjC = this.c + dir[i][1];
@@ -108,10 +115,18 @@ class Game {
 
             // Check the piece
             if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2])) {
+                // Prevent self-capture
+                if (checks[i][2] == this.color + 1) {
+                    this.replace(3, this.color + 1);
+                    this.pieces[this.r][this.c] = 0;
+                    return false;
+                }
                 // Finalize the capture
                 this.replace(3, 0);
             }
         }
+
+        return true;
     }
 
     // Check for liberties

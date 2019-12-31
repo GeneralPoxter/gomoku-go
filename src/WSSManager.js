@@ -58,11 +58,13 @@ function connection(ws) {
                         if (boards[i].pieces[r][c] == 0) {
                             // Update server and client boards
                             boards[i].updateBoard(r, c, color);
-
-                            if (type == "go") {
-                                // Check captures
-                                boards[i].checkCapture(r, c, color);
+                            
+                            // Check captures
+                            if (type == "go" && boards[i].checkCapture(r, c, color)) {
                                 boards[i].passes = 0;
+                            }
+                            else {
+                                return;
                             }
 
                             // Update turn and client boards
@@ -70,8 +72,8 @@ function connection(ws) {
                             send(ws, 'update', boards[i].pieces);
                             send(otherWS, 'update', boards[i].pieces);
 
+                            // Check win cases
                             if (type == "gomoku") {
-                                // Check win and end game
                                 if (boards[i].checkGomoku(r, c, color)) {
                                     games[i][2] = 4;
                                     send(ws, 'end', "You won");

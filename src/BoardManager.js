@@ -43,15 +43,15 @@ class BoardManager {
         return false;
     }
 
-    // Check captures in position and all orthogonal direction, prioritizing enemy color
-    checkCapture(r, c, color) {
+     // Check captures in position and all orthogonal direction, prioritizing enemy color
+    checkCapture() {
         var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
         var checks = [];
 
-        checks.push([color, r, c]);
+        checks.push([this.r, this.c, this.color + 1]);
         for (var i = 0; i < 4; i++) {
-            var adjR = r + dir[i][0];
-            var adjC = c + dir[i][1];
+            var adjR = this.r + dir[i][0];
+            var adjC = this.c + dir[i][1];
             var adjColor = this.pieces[adjR][adjC];
             if (adjColor == 1 || adjColor == 2) {
                 checks.push([adjR, adjC, adjColor]);
@@ -59,7 +59,7 @@ class BoardManager {
         }
 
         // Prioritize the checking queue
-        checks.sort((a, b) => {if (color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
+        checks.sort((a, b) => {if (this.color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
 
         for (var i = 0; i < checks.length; i++) {
             // Visited array to prevent overflow
@@ -70,10 +70,18 @@ class BoardManager {
 
             // Check the piece
             if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2])) {
+                // Prevent self-capture
+                if (checks[i][2] == this.color + 1) {
+                    this.replace(3, this.color + 1);
+                    this.pieces[this.r][this.c] = 0;
+                    return false;
+                }
                 // Finalize the capture
                 this.replace(3, 0);
             }
         }
+
+        return true;
     }
 
     // Check for liberties
