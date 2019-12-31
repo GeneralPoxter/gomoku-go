@@ -89,10 +89,8 @@ button:hover {
 }
 
 svg {
-    height: 96%;
-    max-height: 800px;
-    width: 75%;
-    max-width: 800px;
+    height: auto;
+    width: 80%;
     background-image: url('/img/wood.jpg');
     background-repeat: no-repeat;
     background-size: cover;
