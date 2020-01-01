@@ -11,6 +11,16 @@ class Board {
         // Clear board
         this.board.selectAll("*").remove();
 
+        this.board.append("rect")
+            .attr("x", 40)
+            .attr("y", 40)
+            .attr("height", "760")
+            .attr("width", "760")
+            .attr("fill", "transparent")
+            .attr("stroke", "black")
+            .attr("stroke-width", "1.5")
+            .attr("stroke-dasharray", "760 0 0 760 0 760 760 0");
+
         for (var y = 40; y < 800; y += 40) {
             for (var x = 40; x < 800; x += 40) {
                 if (x < 760 && y < 760) {
@@ -21,8 +31,9 @@ class Board {
                         .attr("height", "40")
                         .attr("width", "40")
                         .attr("fill", "transparent")
+                        .attr("stroke", "black")
                         .attr("stroke-width", "1.5")
-                        .attr("stroke", "black");
+                        .attr("stroke-dasharray", "0 40 40 0 40 0 0 40");
                 }
                 // Create circular pieces
                 var circ = this.board.append("circle");
