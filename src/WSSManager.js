@@ -60,11 +60,13 @@ function connection(ws) {
                             boards[i].updateBoard(r, c, color);
                             
                             // Check captures
-                            if (type == "go" && boards[i].checkCapture(r, c, color)) {
-                                boards[i].passes = 0;
-                            }
-                            else {
-                                return;
+                            if (type == "go") {
+                                if (boards[i].checkCapture(r, c, color)) {
+                                    boards[i].passes = 0;
+                                }
+                                else {
+                                    return;
+                                }
                             }
 
                             // Update turn and client boards
@@ -79,8 +81,6 @@ function connection(ws) {
                                     send(ws, 'end', "You won");
                                     send(otherWS, 'end', "You lost");
                                 }
-                            } else {
-                                // Todo
                             }
 
                             return;
