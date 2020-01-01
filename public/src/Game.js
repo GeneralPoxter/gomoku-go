@@ -52,12 +52,14 @@ class Game {
 
             // Check win cases
             if (this.type == "gomoku") {
+                this.color = (this.color + 1) % 2;
                 if (this.checkGomoku()) {
                     this.end = true;
                     this.turn.innerText = ["Black", "White"][this.color] + " won\nPlease press restart";
                 }
-            } else {
-                // Todo
+                else {
+                    this.color = (this.color + 1) % 2;
+                }
             }
 
         }
@@ -75,7 +77,7 @@ class Game {
             // Count how many pieces in each direction
             for (var j = 0; j < 2; j++) {
                 var m = 1;
-                while (this.pieces[this.r + m * d[j][0]][this.c + m * d[j][1]] == (this.color + 1) % 2 + 1) {
+                while (this.pieces[this.r + m * d[j][0]][this.c + m * d[j][1]] == this.color + 1) {
                     line++;
                     m++;
                 }
