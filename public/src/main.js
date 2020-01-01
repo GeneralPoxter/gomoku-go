@@ -34,7 +34,7 @@ function pass() {
     if (ws != null && ws.type == "go") {
         ws.send('move', "pass");
     }
-    else if (game.type == "go") {
+    else if (game.type == "go" && !game.end) {
         game.pass();
     }
 }
