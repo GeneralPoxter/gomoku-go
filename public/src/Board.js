@@ -44,8 +44,8 @@ class Board {
                     .attr("fill", "transparent")
                     .attr("stroke-width", "0.6")
                     .on("click", func);
-                var r = circ.attr("cy") / 40;
-                var c = circ.attr("cx") / 40;
+                var r = y / 40;
+                var c = x / 40;
                 if (pieces[r][c] == 1 || pieces[r][c] == 2) {
                     circ.attr("fill", "#" + (0xffffff * (pieces[r][c] - 1)).toString(16));
                 }
