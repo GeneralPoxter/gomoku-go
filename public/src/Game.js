@@ -36,11 +36,13 @@ class Game {
             this.pieces[this.r][this.c] = this.color + 1;
 
             // Check captures
-            if (this.type == "go" && this.checkCapture()) {
-                this.passes = 0;
-            }
-            else {
-                return;
+            if (this.type == "go") {
+                if (this.checkCapture()) {
+                    this.passes = 0;
+                }
+                else {
+                    return;
+                }
             }
 
             // Update turns and board
