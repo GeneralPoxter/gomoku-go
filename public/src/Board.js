@@ -14,12 +14,12 @@ class Board {
         this.board.append("rect")
             .attr("x", 40)
             .attr("y", 40)
-            .attr("height", "760")
-            .attr("width", "760")
+            .attr("height", "720")
+            .attr("width", "720")
             .attr("fill", "transparent")
             .attr("stroke", "black")
             .attr("stroke-width", "1.5")
-            .attr("stroke-dasharray", "760 0 0 760 0 760 760 0");
+            .attr("stroke-dasharray", "720 0 0 720 0 720 720 0");
 
         for (var y = 40; y < 800; y += 40) {
             for (var x = 40; x < 800; x += 40) {
