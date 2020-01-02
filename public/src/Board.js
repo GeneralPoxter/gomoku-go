@@ -18,7 +18,7 @@ class Board {
             .attr("width", "720")
             .attr("fill", "transparent")
             .attr("stroke", "black")
-            .attr("stroke-width", "1.5")
+            .attr("stroke-width", "2")
             .attr("stroke-dasharray", "720 0 0 720 0 720 720 0");
 
         for (var y = 40; y < 800; y += 40) {
@@ -32,7 +32,7 @@ class Board {
                         .attr("width", "40")
                         .attr("fill", "transparent")
                         .attr("stroke", "black")
-                        .attr("stroke-width", "1.5")
+                        .attr("stroke-width", "2")
                         .attr("stroke-dasharray", "0 40 40 0 40 0 0 40");
                 }
                 // Create circular pieces

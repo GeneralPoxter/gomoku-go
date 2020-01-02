@@ -17,7 +17,7 @@
         <div class="main">
             <div class="left">
                 <div class="cObject"><button style="font-size: 24px;" onclick="connect('','gomoku'); document.getElementById('code').value = '';">Restart Gomoku</button></div>
-                <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku');return false;">
+                <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku'); return false;">
                     <div class="text">Join code:&nbsp;</div>
                     <input id="code" name="code" type="text"/>
                 </form>
@@ -34,6 +34,14 @@
                 </div>
             </div>
             <div class="right">
+                <div class="rObject">
+                    <div class="chatbox">
+                        <p><i>Chat box: Type "/cmd" for commands</i></p>
+                        <form onsubmit="chat(); return false;">
+                            <input name="chat" type="text"/>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </body>
