@@ -91,6 +91,7 @@ class WSCManager {
         // Server updates chat box
         else if (cmd == "chat") {
             this.chat.innerHTML += "<br />" + val;
+            this.chat.scrollTop = this.chat.scrollHeight;
         }
     }
 
