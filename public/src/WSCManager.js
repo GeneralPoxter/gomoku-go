@@ -31,6 +31,7 @@ class WSCManager {
         // Set up HTML
         this.text = document.getElementById("status");
         this.turn = document.getElementById("turn");
+        this.chat = document.getElementById("chatText");
     }
 
     // Server-client handshake
@@ -87,9 +88,9 @@ class WSCManager {
             this.turn.innerText = val + "\nPlease press restart";
         }
 
-        // Server wants client to display message
-        else if (cmd == "disp") {
-            this.text.innerText = "Online game\nColor is " + ["black", "white"][this.color] + "\n" + val;
+        // Server updates chat box
+        else if (cmd == "chat") {
+            this.chat.innerHTML += "<br />" + val;
         }
     }
 

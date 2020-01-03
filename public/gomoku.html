@@ -36,9 +36,9 @@
             <div class="right">
                 <div class="rObject">
                     <div class="chatbox">
-                        <p><i>Chat box: Type "/cmd" for commands</i></p>
-                        <form onsubmit="chat(); return false;">
-                            <input name="chat" type="text"/>
+                        <p id="chatText" class="lObject"></p>
+                        <form class="lObject" onsubmit="chat(document.getElementById('chatInput').value); return false;">
+                            <input id="chatInput" name="chatInput" type="text"/>
                         </form>
                     </div>
                 </div>

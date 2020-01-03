@@ -26,10 +26,11 @@ function connection(ws) {
             if (games[i] != null) {
                 if (games[i].includes(id)) {
                     var color = games[i].indexOf(id);
+                    var otherWS;
 
                     // Find other client's ws
                     if (games[i][0] != null && games[i][1] != null) {
-                        var otherWS = clients[games[i][(color + 1) % 2]];
+                        otherWS = clients[games[i][(color + 1) % 2]];
                     }
 
                     // Functionality for moves
@@ -91,6 +92,10 @@ function connection(ws) {
 
                     // Functionality for chatroom
                     if (cmd == "chat") {
+                        send(ws, 'chat', "You: " + val);
+                        if (otherWS != null) {
+                            send(otherWS, 'chat', "Opponent: " + val);
+                        }
                         return;
                     }
 
@@ -110,10 +115,10 @@ function connection(ws) {
                     // Set up if game has not started
                     if (games[i][2] == -1) {
                         games[i][2] = 0;
-                        send(otherWS, 'disp', "Opponent has connected");
+                        send(otherWS, 'chat', "<i>Opponent has connected</i>");
                     } else {
                         games[i][2] -= 2;
-                        send(otherWS, 'disp', "Opponent rejoined");
+                        send(otherWS, 'chat', "<i>Opponent rejoined</i>");
                     }
 
                     // Send client updated information
@@ -125,7 +130,7 @@ function connection(ws) {
                         send(ws, 'end', "Game has ended");
                     } else {
                         send(ws, 'turn', games[i][2]);
-                        send(ws, 'disp', "Opponent has connected");
+                        send(ws, 'chat', "<i>Joined room</i><br /><i>Opponent has connected</i>");
                     }
 
                     return;
@@ -150,7 +155,7 @@ function connection(ws) {
                 // Send client information
                 send(ws, 'color', color);
                 send(ws, 'turn', 0);
-                send(ws, 'disp', "Room created");
+                send(ws, 'chat', "<i>Room created</i>");
                 return;
             }
 
@@ -198,7 +203,7 @@ function connection(ws) {
                 }
                 // Inform other client that opponent disconnected
                 else {
-                    send(otherWS, 'disp', "Opponent disconnected");
+                    send(otherWS, 'chat', "<i>Opponent disconnected</i>");
                     games[room][2] += 2;
                 }
 
