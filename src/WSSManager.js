@@ -92,6 +92,13 @@ function connection(ws) {
 
                     // Functionality for chatroom
                     if (cmd == "chat") {
+                        // Sanitize inputs
+                        val = val.replace(/&/g, "&amp;");
+                        val = val.replace(/</g, "&lt;");
+                        val = val.replace(/>/g, "&gt;");
+                        val = val.replace(/"/g, "&#034;");
+                        val = val.replace(/'/g, "&#039;");
+
                         send(ws, 'chat', "You: " + val);
                         if (otherWS != null) {
                             send(otherWS, 'chat', "Opponent: " + val);
