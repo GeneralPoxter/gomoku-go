@@ -102,7 +102,7 @@ svg {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    overflow: auto;
+    text-align: left;
     height: 96%;
     width: 96%;
     background-color: #deccba;
@@ -111,7 +111,11 @@ svg {
     padding: 8px;
     padding-top: 12px;
     padding-bottom: 12px;
-    text-align: left;
+}
+
+#chatText {
+    overflow: auto;
+    word-wrap: break-word;
     font-family: 'Roboto', sans-serif;
 }
 
