@@ -1,3 +1,4 @@
+window.onerror = function(message, source, lineno, colno, error) { alert(error); }
 // Initialize fields
 var game;
 var ws;
@@ -5,10 +6,15 @@ var ws;
 // Start game
 function main(mode, type) {
     board = new Board();
-    document.getElementById("chatText").innerHTML = "<i>Chat box - Type '/cmd' for commands</i>";
+
+    // Set up chat room
+    document.getElementById("chatText").innerHTML = "";
+    chatDisp("Chat room - Type '/cmd' for commands");
+
     if (mode == "local") {
         game = new Game(type);
         game.renderBoard();
+        chatDisp("Chat room disabled for local game, commands still available");
     } else {
         ws.renderBoard();
     }
@@ -47,6 +53,14 @@ function chat(msg) {
         ws.send('chat', msg);
     }
     else if (!game.end) {
-        // Todo
+        game.cmd(msg);
     }
+}
+
+// Chat display
+function chatDisp(msg) {
+    var ele = document.createElement("span");
+    ele.innerText = msg;
+    ele.style.fontStyle = "italic";
+    document.getElementById("chatText").appendChild(ele);
 }

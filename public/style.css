@@ -120,6 +120,11 @@ svg {
     font-family: 'Roboto', sans-serif;
 }
 
+span {
+    display: block;
+    margin-top: 8px;
+}
+
 @media only screen and (max-width: 1320px) {
     .main {
         flex-direction: column;

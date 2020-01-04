@@ -43,8 +43,8 @@ function connection(ws) {
                             send(otherWS, 'update', boards[i].pieces);
                             
                             if (boards[i].passes == 2) {
-                                send(ws, 'end', "Game has ended");
-                                send(otherWS, 'end', "Game has ended");
+                                send(ws, 'end', "Game ended");
+                                send(otherWS, 'end', "Game ended");
                                 games[i][2] = 2;
                             }
                             return;
@@ -80,9 +80,9 @@ function connection(ws) {
                                 if (boards[i].checkGomoku(r, c, color)) {
                                     games[i][2] = 4;
                                     send(ws, 'end', "You won");
-                                    send(ws, 'chat', "<i>Game has ended - " + ["black", "white"][color] + " won</i>");
+                                    send(ws, 'chat', ["Game ended - " + ["black", "white"][color] + " won", true]);
                                     send(otherWS, 'end', "You lost");
-                                    send(otherWS, 'chat', "<i>Game has ended - " + ["black", "white"][color] + " won</i>");
+                                    send(otherWS, 'chat', ["Game ended - " + ["black", "white"][color] + " won", true]);
                                 }
                             }
 
@@ -92,14 +92,14 @@ function connection(ws) {
                         return;
                     }
 
-                    // Functionality for chatroom
+                    // Functionality for chat room
                     if (cmd == "chat") {
                         // Sanitize inputs
-                        val = val.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#034;").replace(/'/g, "&#039;");
+                        //val = val.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#034;").replace(/'/g, "&#039;");
 
-                        send(ws, 'chat', "You: " + val);
+                        send(ws, 'chat', ["You: " + val, false]);
                         if (otherWS != null) {
-                            send(otherWS, 'chat', "Opponent: " + val);
+                            send(otherWS, 'chat', ["Opponent: " + val, false]);
                         }
                         return;
                     }
@@ -120,10 +120,10 @@ function connection(ws) {
                     // Set up if game has not started
                     if (games[i][2] == -1) {
                         games[i][2] = 0;
-                        send(otherWS, 'chat', "<i>Opponent has connected</i>");
+                        send(otherWS, 'chat', ["Opponent connected", true]);
                     } else {
                         games[i][2] -= 2;
-                        send(otherWS, 'chat', "<i>Opponent rejoined</i>");
+                        send(otherWS, 'chat', ["Opponent rejoined", true]);
                     }
 
                     // Send client updated information
@@ -132,10 +132,11 @@ function connection(ws) {
 
                     // Check if game has ended
                     if (games[i][2] == 4) {
-                        send(ws, 'end', "Game has ended");
+                        send(ws, 'end', "Game ended");
                     } else {
                         send(ws, 'turn', games[i][2]);
-                        send(ws, 'chat', "<i>Connected to room " + room + " </i><br /><i>Opponent has connected</i>");
+                        send(ws, 'chat', ["Connected to room " + room, true]);
+                        send(ws, 'chat', ["Opponent connected", true]);
                     }
 
                     return;
@@ -160,7 +161,7 @@ function connection(ws) {
                 // Send client information
                 send(ws, 'color', color);
                 send(ws, 'turn', 0);
-                send(ws, 'chat', "<i>Room " + room + " created</i>");
+                send(ws, 'chat', ["Room " + room + " created", true]);
                 return;
             }
 
@@ -208,7 +209,7 @@ function connection(ws) {
                 }
                 // Inform other client that opponent disconnected
                 else {
-                    send(otherWS, 'chat', "<i>Opponent disconnected</i>");
+                    send(otherWS, 'chat', ["Opponent disconnected", true]);
                     games[room][2] += 2;
                 }
 

@@ -6,6 +6,8 @@ class Game {
         this.type = type;
         this.color = 0;
         this.passes = 0;
+        this.draw = false;
+        this.takeback = false;
         this.end = false;
 
         // Initialize board
@@ -21,6 +23,7 @@ class Game {
         document.getElementById('code').value = "";
         this.text = document.getElementById("status");
         this.turn = document.getElementById("turn");
+        this.chat = document.getElementById("chatText");
         this.text.innerText = "Local game";
         this.turn.innerText = "Black's turn";
     }
@@ -33,8 +36,18 @@ class Game {
 
         // Check valid move
         if (this.pieces[this.r][this.c] == 0 && !this.end) {
-            // Add piece to array pieces
+            var colorName = ["Black", "White"][this.color];
+            var otherColor = ["Black", "White"][(this.color + 1) % 2]
+
+            // Store previous piece setup, add piece to array pieces
+            this.prevPieces = JSON.parse(JSON.stringify(this.pieces));
             this.pieces[this.r][this.c] = this.color + 1;
+
+            // Check draw
+            if (this.draw) {
+                this.draw = false;
+                this.chatDisp(colorName + " cancelled the draw offer");
+            }
 
             // Check captures
             if (this.type == "go") {
@@ -48,7 +61,7 @@ class Game {
 
             // Update turns and board
             this.color = (this.color + 1) % 2;
-            this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
+            this.turn.innerText = otherColor + "'s turn";
             this.renderBoard();
 
             // Check win cases
@@ -56,7 +69,8 @@ class Game {
                 this.color = (this.color + 1) % 2;
                 if (this.checkGomoku()) {
                     this.end = true;
-                    this.turn.innerText = ["Black", "White"][this.color] + " won\nPlease press restart";
+                    this.turn.innerText = colorName + " won\nPlease press restart";
+                    this.chatDisp("Game ended - " + colorName + " won");
                 }
                 else {
                     this.color = (this.color + 1) % 2;
@@ -166,12 +180,70 @@ class Game {
     // Pass functionality
     pass() {
         this.passes ++;
+        this.chatDisp(["Black", "White"][this.color] + "passed");
         this.color = (this.color + 1) % 2;
         this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
         
         if (this.passes == 2) {
             this.end = true;
-            this.turn.innerText = "Game has ended\nPlease press restart";
+            this.turn.innerText = "Game ended\nPlease press restart";
+            this.chatDisp("Game ended");
+        }
+    }
+
+    // Command functionality
+    cmd(msg) {
+        var colorName = ["Black", "White"][this.color];
+        var otherColor = ["Black", "White"][(this.color + 1) % 2]
+
+        if (msg == "/cmd") {
+            this.chatDisp("/cmd: display commands\n/forfeit: forfeit the game\n/draw: propose draw, opponent must accept\n/accept: accept draw or takeback offers\n/reject: reject draw or takeback offers", true);
+        }
+
+        if (msg == "/forfeit") {
+            this.end = true;
+            this.chatDisp(colorName + " forfeited");
+            this.turn.innerText = otherColor + " won\nPlease press restart";
+            this.chatDisp("Game ended - " + otherColor + " won");
+        }
+
+        if (msg == "/draw") {
+            if (!this.draw) {
+                this.draw = true;
+                this.chatDisp(colorName + " offered a draw\n" + otherColor + " can accept with /accept or /draw and can reject with /reject\n" + colorName + " can cancel the offer with a move");
+            }
+            else {
+                msg = "/accept";
+            }
+        }
+
+        if (msg == "/accept") {
+            if (this.draw) {
+                this.end = true;
+                this.chatDisp(otherColor + " accepted the draw offer");
+                this.turn.innerText = "Game ended\nPlease press restart";
+                this.chatDisp("Game ended in a draw");
+            }
+            else if (this.takeback) {
+
+            }
+            else {
+                this.chatDisp("No offer, command ignored");
+            }
+        }
+
+        if (msg == "/reject") {
+            if (this.draw) {
+                this.draw = false;
+                this.chatDisp(otherColor + " rejected the draw offer");
+            }
+            else if (this.takeback) {
+                this.takeback = false;
+                this.chatDisp(otherColor + " rejected the takeback offer");
+            }
+            else {
+                this.chatDisp("No offer, command ignored");
+            }
         }
     }
 
@@ -181,6 +253,15 @@ class Game {
         this.board.render(this.pieces, function () {
             cur.addPiece(this);
         });
+    }
+
+    // Chat display
+    chatDisp(msg) {
+        var ele = document.createElement("span");
+        ele.innerText = msg;
+        ele.style.fontStyle = "italic";
+        this.chat.appendChild(ele);
+        this.chat.scrollTop = this.chat.scrollHeight;
     }
 
     // Replace all instance of i in the playable board with j
