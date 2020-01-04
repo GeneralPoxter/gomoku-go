@@ -18,6 +18,7 @@ class Game {
         this.pieces.push(Array(21).fill(9));
 
         // Set up HTML
+        document.getElementById('code').value = "";
         this.text = document.getElementById("status");
         this.turn = document.getElementById("turn");
         this.text.innerText = "Local game";

@@ -16,8 +16,8 @@
     <body onload="main('local', 'go');" onbeforeunload="connect('',''); return null;">
         <div class="main">
             <div class="left">
-                <div class="cObject"><button style="font-size: 24px;" onclick="connect('','go'); document.getElementById('code').value = '';">Restart Go</button></div>
-                <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'go'); return false;">
+                <div class="cObject"><button style="font-size: 24px;" onclick="connect('','go');">Restart Go</button></div>
+                <form class="lObject" name="inputA" osnsubmit="connect(document.getElementById('code').value, 'go'); return false;" autocomplete="off">
                     <div class="text">Join code:&nbsp;</div>
                     <input id="code" name="code" type="text"/>
                 </form>

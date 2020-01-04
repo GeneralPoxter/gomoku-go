@@ -63,6 +63,7 @@ body {
     justify-content: right;
     height: 100%;
     width: 100%;
+    padding-top: 5%;
 }
 
 .text {
@@ -103,9 +104,9 @@ svg {
     flex-direction: column;
     justify-content: flex-end;
     text-align: left;
-    height: 96%;
+    height: 90%;
     width: 96%;
-    background-color: #deccba;
+    background-color: #f8efe8;
     border: 2px solid black;
     border-radius: 20px;
     padding: 8px;

@@ -16,8 +16,8 @@
     <body onload="main('local', 'gomoku');" onbeforeunload="connect('',''); return null;">
         <div class="main">
             <div class="left">
-                <div class="cObject"><button style="font-size: 24px;" onclick="connect('','gomoku'); document.getElementById('code').value = '';">Restart Gomoku</button></div>
-                <form class="lObject" name="input" onsubmit="connect(document.getElementById('code').value, 'gomoku'); return false;">
+                <div class="cObject"><button style="font-size: 24px;" onclick="connect('','gomoku');">Restart Gomoku</button></div>
+                <form class="lObject" name="inputA" onsubmit="connect(document.getElementById('code').value, 'gomoku'); return false;" autocomplete="off">
                     <div class="text">Join code:&nbsp;</div>
                     <input id="code" name="code" type="text"/>
                 </form>
@@ -37,7 +37,7 @@
                 <div class="rObject">
                     <div class="chatbox">
                         <p id="chatText"></p>
-                        <form onsubmit="chat(document.getElementById('chatInput').value); return false;">
+                        <form name="inputB" onsubmit="chat(document.getElementById('chatInput').value); return false;" autocomplete="off">
                             <input id="chatInput" name="chatInput" type="text"/>
                         </form>
                     </div>

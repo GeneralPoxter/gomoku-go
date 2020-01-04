@@ -80,7 +80,9 @@ function connection(ws) {
                                 if (boards[i].checkGomoku(r, c, color)) {
                                     games[i][2] = 4;
                                     send(ws, 'end', "You won");
+                                    send(ws, 'chat', "<i>Game has ended - " + ["black", "white"][color] + " won</i>");
                                     send(otherWS, 'end', "You lost");
+                                    send(otherWS, 'chat', "<i>Game has ended - " + ["black", "white"][color] + " won</i>");
                                 }
                             }
 
@@ -133,7 +135,7 @@ function connection(ws) {
                         send(ws, 'end', "Game has ended");
                     } else {
                         send(ws, 'turn', games[i][2]);
-                        send(ws, 'chat', "<i>Joined room</i><br /><i>Opponent has connected</i>");
+                        send(ws, 'chat', "<i>Connected to room " + room + " </i><br /><i>Opponent has connected</i>");
                     }
 
                     return;
@@ -158,7 +160,7 @@ function connection(ws) {
                 // Send client information
                 send(ws, 'color', color);
                 send(ws, 'turn', 0);
-                send(ws, 'chat', "<i>Room created</i>");
+                send(ws, 'chat', "<i>Room " + room + " created</i>");
                 return;
             }
 

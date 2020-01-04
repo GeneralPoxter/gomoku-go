@@ -1,5 +1,3 @@
-window.onerror = function(message, source, lineno, colno, error) { alert(error);}
-
 // Initialize fields
 var game;
 var ws;
