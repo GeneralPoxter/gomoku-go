@@ -18,6 +18,7 @@ class Game {
             this.pieces.push([9].concat(Array(19).fill(0), [9]));
         }
         this.pieces.push(Array(21).fill(9));
+        this.prevPieces = []
 
         // Set up HTML
         document.getElementById('code').value = "";
@@ -39,14 +40,20 @@ class Game {
             var colorName = ["Black", "White"][this.color];
             var otherColor = ["Black", "White"][(this.color + 1) % 2]
 
-            // Store previous piece setup, add piece to array pieces
-            this.prevPieces = JSON.parse(JSON.stringify(this.pieces));
+            // Store previous pieces, add piece to array pieces
+            if (this.prevPieces.push(JSON.parse(JSON.stringify(this.pieces))) == 3) {
+                this.prevPieces = this.prevPieces.slice(1);
+            }
             this.pieces[this.r][this.c] = this.color + 1;
 
-            // Check draw
+            // Check draw and takeback
             if (this.draw) {
                 this.draw = false;
                 this.chatDisp(colorName + " cancelled the draw offer");
+            }
+            if (this.takeback) {
+                this.takeback = false;
+                this.chatDisp(colorName + " cancelled the takeback offer");
             }
 
             // Check captures
@@ -197,7 +204,7 @@ class Game {
         var otherColor = ["Black", "White"][(this.color + 1) % 2]
 
         if (msg == "/cmd") {
-            this.chatDisp("/cmd: display commands\n/forfeit: forfeit the game\n/draw: propose draw, opponent must accept\n/accept: accept draw or takeback offers\n/reject: reject draw or takeback offers", true);
+            this.chatDisp("/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting Black and White's last moves, opponent must accept\n/accept: accept offers\n/reject: reject offers", true);
         }
 
         if (msg == "/forfeit") {
@@ -208,12 +215,31 @@ class Game {
         }
 
         if (msg == "/draw") {
-            if (!this.draw) {
+            if (this.takeback) {
+                this.chatDisp("Unable to offer draw, takeback offer in progress");
+            }
+            else if (this.draw) {
+                msg = "/accept";
+            }
+            else {
                 this.draw = true;
                 this.chatDisp(colorName + " offered a draw\n" + otherColor + " can accept with /accept or /draw and can reject with /reject\n" + colorName + " can cancel the offer with a move");
             }
-            else {
+        }
+
+        if (msg == "/takeback") {
+            if (this.draw) {
+                this.chatDisp("Unable to offer takeback, draw offer in progress");
+            }
+            else if (this.takeback) {
                 msg = "/accept";
+            }
+            else if (this.prevPieces.length < 2) {
+                this.chatDisp("No takebacks allowed on " + colorName + "'s first move or first move since last takeback, command ignored");
+            }
+            else {
+                this.takeback = true;
+                this.chatDisp(colorName + " offered a takeback\n" + otherColor + " can accept with /accept or /takeback and can reject with /reject\n" + colorName + " can cancel the offer with a move");
             }
         }
 
@@ -225,10 +251,14 @@ class Game {
                 this.chatDisp("Game ended in a draw");
             }
             else if (this.takeback) {
-
+                this.takeback = false;
+                this.chatDisp(otherColor + " accepted the takeback offer\nBlack and White's last moves reverted");
+                this.pieces = JSON.parse(JSON.stringify(this.prevPieces[0]));
+                this.prevPieces = [];
+                this.renderBoard();
             }
             else {
-                this.chatDisp("No offer, command ignored");
+                this.chatDisp("No offer to accept, command ignored");
             }
         }
 
@@ -242,7 +272,7 @@ class Game {
                 this.chatDisp(otherColor + " rejected the takeback offer");
             }
             else {
-                this.chatDisp("No offer, command ignored");
+                this.chatDisp("No offer to reject, command ignored");
             }
         }
     }
