@@ -128,7 +128,7 @@ function connection(ws) {
                         }
                         
                         if (val == "/cmd") {
-                            send(ws, 'chat', ["/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting Black and White's last moves, opponent must accept\n/accept: accept offers\n/reject: reject offers", "italic"]);
+                            send(ws, 'chat', ["/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting the last move, opponent must accept\n/accept: accept offers\n/reject: reject offers", "italic"]);
                             return;
                         }
 
@@ -185,9 +185,9 @@ function connection(ws) {
                                     if (boards[i].drawColor != null) {
                                         send(ws, 'chat', ["Unable to offer takeback, draw offer in progress", "italic"]);
                                     }
-                                    else if (boards[i].prevPieces.length < 2) {
+                                    else if (boards[i].prevPieces.length < 1) {
                                         console.log("here");
-                                        send(ws, 'chat', ["No takebacks allowed on your first move or first move since last takeback, command ignored", "italic"]);
+                                        send(ws, 'chat', ["No takebacks allowed on first move or first move since last takeback, command ignored", "italic"]);
                                     }
                                     else {
                                         boards[i].takebackColor = color;
@@ -218,7 +218,7 @@ function connection(ws) {
                                     boards[i].takebackColor = null;
                                     send(ws, 'chat', ["You accepted the takeback offer", "italic"]);
                                     send(otherWS, 'chat', ["Opponent accepted the takeback offer", "italic"]);
-                                    boards[i].pieces = JSON.parse(JSON.stringify(boards[i].prevPieces[0]));
+                                    boards[i].pieces = JSON.parse(JSON.stringify(boards[i].prevPieces[1]));
                                     boards[i].prevPieces = [];
                                     send(ws, 'update', boards[i].pieces);
                                     send(otherWS, 'update', boards[i].pieces);
