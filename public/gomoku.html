@@ -18,18 +18,18 @@
 	<div class="main">
 		<div class="left">
 			<div class="cObject">
-				<button style="font-size: 24px;" onclick="connect('','gomoku');">Restart Gomoku</button></div>
-			<form class="lObject" name="inputA"
-				onsubmit="connect(document.getElementById('code').value, 'gomoku'); return false;" autocomplete="off">
+				<button style="font-size: 24px;" onclick="connect('','gomoku');">Restart Gomoku</button>
+            </div>
+			<form class="lObject" name="inputA" onsubmit="connect(document.getElementById('code').value, 'gomoku'); return false;" autocomplete="off">
 				<div class="text">Join code:&nbsp;</div>
 				<input id="code" name="code" type="text"/>
-                </form>
-				<div class="lObject">
-					<div id="status" class="text"></div>
-				</div>
-				<div class="lObject">
-					<div id="turn" class="text"></div>
-				</div>
+            </form>
+            <div class="lObject">
+                <div id="status" class="text"></div>
+            </div>
+            <div class="lObject">
+                <div id="turn" class="text"></div>
+            </div>
 		</div>
 		<div class="center">
 			<div class="cObject">
@@ -39,11 +39,10 @@
 		<div class="right">
 			<div class="rObject">
 				<div class="chatbox">
-					<p id="chatText"></p>
-					<form name="inputB" onsubmit="chat(document.getElementById('chatInput').value); return false;"
-						autocomplete="off">
-						<input id="chatInput" name="chatInput" type="text"/>
-                        </form>
+					<div id="chatText"></div>
+					<form name="inputB" onsubmit="chat(document.getElementById('chatInput').value); return false;" autocomplete="off">
+						<input id="chatInput" name="chatInput" type="text" placeholder="Enter chat message here"/>
+                    </form>
 				</div>
 			</div>
 		</div>

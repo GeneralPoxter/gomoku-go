@@ -1,19 +1,30 @@
 // Board manager for server-side game management
 class BoardManager {
     constructor() {
+        this.started = false;
+        this.drawColor = null;
+        this.takebackColor == null;
+        this.passes = 0;
+        
         this.pieces = [];
         this.pieces.push(Array(21).fill(9));
         for (var r = 0; r < 19; r++) {
             this.pieces.push([9].concat(Array(19).fill(0), [9]));
         }
         this.pieces.push(Array(21).fill(9));
-        this.passes = 0;
-        this.started = false;
+        this.prevPieces = [];
     }
 
     updateBoard(r, c, color) {
+        this.updatePrev();
         this.pieces[r][c] = color + 1;
         this.started = true;
+    }
+
+    updatePrev() {
+        if (this.prevPieces.push(JSON.parse(JSON.stringify(this.pieces))) == 3) {
+            this.prevPieces = this.prevPieces.slice(1);
+        }
     }
 
     // Check for 5 in a row
@@ -44,14 +55,14 @@ class BoardManager {
     }
 
      // Check captures in position and all orthogonal direction, prioritizing enemy color
-    checkCapture() {
+    checkCapture(r, c, color) {
         var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
         var checks = [];
 
-        checks.push([this.r, this.c, this.color + 1]);
+        checks.push([r, c, color + 1]);
         for (var i = 0; i < 4; i++) {
-            var adjR = this.r + dir[i][0];
-            var adjC = this.c + dir[i][1];
+            var adjR = r + dir[i][0];
+            var adjC = c + dir[i][1];
             var adjColor = this.pieces[adjR][adjC];
             if (adjColor == 1 || adjColor == 2) {
                 checks.push([adjR, adjC, adjColor]);
@@ -59,7 +70,7 @@ class BoardManager {
         }
 
         // Prioritize the checking queue
-        checks.sort((a, b) => {if (this.color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
+        checks.sort((a, b) => {if (color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
 
         for (var i = 0; i < checks.length; i++) {
             // Visited array to prevent overflow
@@ -71,9 +82,9 @@ class BoardManager {
             // Check the piece
             if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2])) {
                 // Prevent self-capture
-                if (checks[i][2] == this.color + 1) {
-                    this.replace(3, this.color + 1);
-                    this.pieces[this.r][this.c] = 0;
+                if (checks[i][2] == color + 1) {
+                    this.replace(3, color + 1);
+                    this.pieces[r][c] = 0;
                     return false;
                 }
                 // Finalize the capture

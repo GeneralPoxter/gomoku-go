@@ -90,11 +90,9 @@ class WSCManager {
 
         // Server updates chat room
         else if (cmd == "chat") {
-            var ele = document.createElement("span");
+            var ele = document.createElement("p");
             ele.innerText = val[0];
-            if (val[1]) {
-                ele.style.fontStyle = "italic";
-            }
+            ele.style.fontStyle = val[1];
             this.chat.appendChild(ele);
             this.chat.scrollTop = this.chat.scrollHeight;
         }

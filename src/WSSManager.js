@@ -26,11 +26,14 @@ function connection(ws) {
             if (games[i] != null) {
                 if (games[i].includes(id)) {
                     var color = games[i].indexOf(id);
+                    var colorName = ["Black", "White"][color];
                     var otherWS;
+                    var otherColor;
 
                     // Find other client's ws
                     if (games[i][0] != null && games[i][1] != null) {
                         otherWS = clients[games[i][(color + 1) % 2]];
+                        otherColor = ["Black", "White"][(color + 1) % 2];
                     }
 
                     // Functionality for moves
@@ -38,7 +41,21 @@ function connection(ws) {
 
                         if (val == "pass" && type == "go") {
                             boards[i].passes ++;
+                            boards[i].updatePrev();
                             games[i][2] = (games[i][2] + 1) % 2;
+
+                            // Check draw and takeback
+                            if (boards[i].drawColor != null) {
+                                boards[i].drawColor = null;
+                                send(ws, 'chat', ["You cancelled the draw offer", "italic"]);
+                                send(otherWS, 'chat', ["Opponent cancelled the draw offer", "italic"]);
+                            }
+                            if (boards[i].takebackColor != null) {
+                                boards[i].takebackColor = null;
+                                send(ws, 'chat', ["You cancelled the takeback offer", "italic"]);
+                                send(otherWS, 'chat', ["Opponent cancelled the takeback offer", "italic"]);
+                            }
+
                             send(ws, 'update', boards[i].pieces);
                             send(otherWS, 'update', boards[i].pieces);
                             
@@ -57,8 +74,20 @@ function connection(ws) {
 
                         // Check if the move is valid
                         if (boards[i].pieces[r][c] == 0) {
-                            // Update server and client boards
+                            // Update server
                             boards[i].updateBoard(r, c, color);
+
+                            // Check draw and takeback
+                            if (boards[i].drawColor != null) {
+                                boards[i].drawColor = null;
+                                send(ws, 'chat', ["You cancelled the draw offer", "italic"]);
+                                send(otherWS, 'chat', ["Opponent cancelled the draw offer", "italic"]);
+                            }
+                            if (boards[i].takebackColor != null) {
+                                boards[i].takebackColor = null;
+                                send(ws, 'chat', ["You cancelled the takeback offer", "italic"]);
+                                send(otherWS, 'chat', ["Opponent cancelled the takeback offer", "italic"]);
+                            }
                             
                             // Check captures
                             if (type == "go") {
@@ -80,9 +109,9 @@ function connection(ws) {
                                 if (boards[i].checkGomoku(r, c, color)) {
                                     games[i][2] = 4;
                                     send(ws, 'end', "You won");
-                                    send(ws, 'chat', ["Game ended - " + ["black", "white"][color] + " won", true]);
+                                    send(ws, 'chat', ["Game ended - " + colorName + " won", "italic"]);
                                     send(otherWS, 'end', "You lost");
-                                    send(otherWS, 'chat', ["Game ended - " + ["black", "white"][color] + " won", true]);
+                                    send(otherWS, 'chat', ["Game ended - " + colorName + " won", "italic"]);
                                 }
                             }
 
@@ -94,12 +123,137 @@ function connection(ws) {
 
                     // Functionality for chat room
                     if (cmd == "chat") {
-                        // Sanitize inputs
-                        //val = val.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&#034;").replace(/'/g, "&#039;");
+                        if (val.length == 0) {
+                            return;
+                        }
+                        
+                        if (val == "/cmd") {
+                            send(ws, 'chat', ["/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting Black and White's last moves, opponent must accept\n/accept: accept offers\n/reject: reject offers", "italic"]);
+                            return;
+                        }
 
-                        send(ws, 'chat', ["You: " + val, false]);
+                        if (val == "/forfeit") {
+                            if (games[i][2] == 0 || games[i][2] == 1) {
+                                games[i][2] = 4;
+                                send(ws, 'chat', ["You forfeited", "italic"]);
+                                send(otherWS, 'chat', ["Opponent forfeited", "italic"]);
+                                send(ws, 'end', "You lost");
+                                send(ws, 'chat', ["Game ended - " + otherColor + " won", "italic"]);
+                                send(otherWS, 'end', "You won");
+                                send(otherWS, 'chat', ["Game ended - " + otherColor + " won", "italic"]);
+                            }
+                            return;
+                        }
+
+                        if (val == "/draw") {
+                            if (games[i][2] == 0 || games[i][2] == 1) {
+                                if (boards[i].drawColor == color) {
+                                    send(ws, 'chat', ["Unable to offer draw, draw offer in progress", "italic"]);
+                                    return;
+                                }
+                                else if (boards[i].drawColor == (color + 1) % 2) {
+                                    val = "/accept";
+                                }
+                                else {
+                                    if (boards[i].takebackColor != null) {
+                                        send(ws, ["Unable to offer draw, takeback offer in progress", "italic"]);
+                                    }
+                                    else {
+                                        boards[i].drawColor = color;
+                                        send(ws, 'chat', ["You offered a draw\n Opponent can accept with /accept or /draw and can reject with /reject\n Offer can be cancelled with a move", "italic"]);
+                                        send(otherWS, 'chat', ["Opponent offered a draw\n You can accept with /accept or /draw and can reject with /reject\n Offer can be cancelled with a move", "italic"]);
+                                    }
+                                    return;
+                                }
+                            }
+                            else {
+                                return;
+                            }
+                        }
+
+                        if (val == "/takeback") {
+                            console.log("here");
+                            if (games[i][2] == 0 || games[i][2] == 1) {
+                                if (boards[i].takebackColor == color) {
+                                    send(ws, 'chat', ["Unable to offer takeback, takeback offer in progress", "italic"]);
+                                    return;
+                                }
+                                else if (boards[i].takebackColor == (color + 1) % 2) {
+                                    val = "/accept";
+                                }
+                                else {
+                                    if (boards[i].drawColor != null) {
+                                        send(ws, 'chat', ["Unable to offer takeback, draw offer in progress", "italic"]);
+                                    }
+                                    else if (boards[i].prevPieces.length < 2) {
+                                        console.log("here");
+                                        send(ws, 'chat', ["No takebacks allowed on your first move or first move since last takeback, command ignored", "italic"]);
+                                    }
+                                    else {
+                                        boards[i].takebackColor = color;
+                                        send(ws, 'chat', ["You offered a takeback\n Opponent can accept with /accept or /takeback and can reject with /reject\n Offer can be cancelled with a move", "italic"]);
+                                        send(otherWS, 'chat', ["Opponent offered a takeback\n You can accept with /accept or /takeback and can reject with /reject\n Offer can be cancelled with a move", "italic"]);
+                                    }
+                                    return;
+                                }
+                            }
+                            else {
+                                console.log("or here");
+                                return;
+                            }
+                        }
+
+                        if (val == "/accept") {
+                            if (games[i][2] == 0 || games[i][2] == 1) {
+                                if (boards[i].drawColor == (color + 1) % 2) {
+                                    games[i][2] = 4;
+                                    send(ws, 'chat', ["You accepted the draw offer", "italic"]);
+                                    send(otherWS, 'chat', ["Opponent accepted the draw offer", "italic"]);
+                                    send(ws, 'end', "Game ended");
+                                    send(ws, 'chat', ["Game ended in a draw", "italic"]);
+                                    send(otherWS, 'end', "Game ended");
+                                    send(otherWS, 'chat', ["Game ended in a draw", "italic"]);
+                                }
+                                else if (boards[i].takebackColor == (color + 1) % 2) {
+                                    boards[i].takebackColor = null;
+                                    send(ws, 'chat', ["You accepted the takeback offer", "italic"]);
+                                    send(otherWS, 'chat', ["Opponent accepted the takeback offer", "italic"]);
+                                    boards[i].pieces = JSON.parse(JSON.stringify(boards[i].prevPieces[0]));
+                                    boards[i].prevPieces = [];
+                                    send(ws, 'update', boards[i].pieces);
+                                    send(otherWS, 'update', boards[i].pieces);
+                                }
+                                else {
+                                    send(ws, 'chat', ["No offer to accept, command ignored", "italic"]);
+                                }
+                                return;
+                            }
+                            return;
+                        }
+
+                        if (val == "/reject") {
+                            if (games[i][2] == 0 || games[i][2] == 1) {
+                                if (boards[i].drawColor == (color + 1) % 2) {
+                                    boards[i].drawColor = null;
+                                    send(ws, 'chat', ["You rejected the draw offer", "italic"]);
+                                    send(otherWS, 'chat', ["Opponent rejected the draw offer", "italic"]);
+                                }
+                                else if (boards[i].takebackColor == (color + 1) % 2) {
+                                    boards[i].takebackColor = null;
+                                    send(ws, 'chat', ["You rejected the takeback offer", "italic"]);
+                                    send(otherWS, 'chat', ["Opponent rejected the takeback offer", "italic"]);
+                                }
+                                else {
+                                    send(ws, 'chat', ["No offer to accept, command ignored", "italic"]);
+                                }
+                                return;
+                            }
+                            return;
+                        }
+
+                        send(ws, 'chat', ["You: " + val, "normal"]);
                         if (otherWS != null) {
-                            send(otherWS, 'chat', ["Opponent: " + val, false]);
+                            send(otherWS, 'chat', ["Opponent: " + val, "normal"]);
                         }
                         return;
                     }
@@ -120,10 +274,10 @@ function connection(ws) {
                     // Set up if game has not started
                     if (games[i][2] == -1) {
                         games[i][2] = 0;
-                        send(otherWS, 'chat', ["Opponent connected", true]);
+                        send(otherWS, 'chat', ["Opponent connected", "italic"]);
                     } else {
                         games[i][2] -= 2;
-                        send(otherWS, 'chat', ["Opponent rejoined", true]);
+                        send(otherWS, 'chat', ["Opponent rejoined", "italic"]);
                     }
 
                     // Send client updated information
@@ -135,8 +289,8 @@ function connection(ws) {
                         send(ws, 'end', "Game ended");
                     } else {
                         send(ws, 'turn', games[i][2]);
-                        send(ws, 'chat', ["Connected to room " + room, true]);
-                        send(ws, 'chat', ["Opponent connected", true]);
+                        send(ws, 'chat', ["Connected to room " + room, "italic"]);
+                        send(ws, 'chat', ["Opponent connected", "italic"]);
                     }
 
                     return;
@@ -161,7 +315,8 @@ function connection(ws) {
                 // Send client information
                 send(ws, 'color', color);
                 send(ws, 'turn', 0);
-                send(ws, 'chat', ["Room " + room + " created", true]);
+                send(ws, 'chat', ["Room " + room + " created", "italic"]);
+                send(ws, 'chat', ["All commands beside /cmd only active when both players connected\nDraw and takeback offers can only be sent on your turn", "italic"]);
                 return;
             }
 
@@ -209,7 +364,7 @@ function connection(ws) {
                 }
                 // Inform other client that opponent disconnected
                 else {
-                    send(otherWS, 'chat', ["Opponent disconnected", true]);
+                    send(otherWS, 'chat', ["Opponent disconnected", "italic"]);
                     games[room][2] += 2;
                 }
 

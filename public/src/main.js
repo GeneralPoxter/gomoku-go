@@ -59,7 +59,7 @@ function chat(msg) {
 
 // Chat display
 function chatDisp(msg) {
-    var ele = document.createElement("span");
+    var ele = document.createElement("p");
     ele.innerText = msg;
     ele.style.fontStyle = "italic";
     document.getElementById("chatText").appendChild(ele);

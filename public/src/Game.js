@@ -186,8 +186,20 @@ class Game {
 
     // Pass functionality
     pass() {
+        var colorName = ["Black", "White"][this.color];
         this.passes ++;
-        this.chatDisp(["Black", "White"][this.color] + "passed");
+        this.chatDisp(colorName + "passed");
+        
+        // Check draw and takeback
+        if (this.draw) {
+            this.draw = false;
+            this.chatDisp(colorName + " cancelled the draw offer");
+        }
+        if (this.takeback) {
+            this.takeback = false;
+            this.chatDisp(colorName + " cancelled the takeback offer");
+        }
+
         this.color = (this.color + 1) % 2;
         this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
         
@@ -204,7 +216,7 @@ class Game {
         var otherColor = ["Black", "White"][(this.color + 1) % 2]
 
         if (msg == "/cmd") {
-            this.chatDisp("/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting Black and White's last moves, opponent must accept\n/accept: accept offers\n/reject: reject offers", true);
+            this.chatDisp("/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting Black and White's last moves, opponent must accept\n/accept: accept offers\n/reject: reject offers");
         }
 
         if (msg == "/forfeit") {
@@ -287,7 +299,7 @@ class Game {
 
     // Chat display
     chatDisp(msg) {
-        var ele = document.createElement("span");
+        var ele = document.createElement("p");
         ele.innerText = msg;
         ele.style.fontStyle = "italic";
         this.chat.appendChild(ele);
