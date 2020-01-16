@@ -13,6 +13,7 @@ class BoardManager {
         }
         this.pieces.push(Array(21).fill(9));
         this.prevPieces = [];
+        this.updatePrev();
     }
 
     updateBoard(r, c, color) {

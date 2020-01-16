@@ -88,14 +88,17 @@ class WSCManager {
             this.turn.innerText = val + "\nPlease press restart";
         }
 
-        // Server updates chat room
-        else if (cmd == "chat") {
+        // Server sends a chat message or response
+        else if (cmd == "chat" || cmd == "res") {
             var ele = document.createElement("p");
-            ele.innerText = val[0];
-            ele.style.fontStyle = val[1];
+            ele.innerText = val;
+            if (cmd == "res") {
+                ele.style.fontStyle = "italic";
+            }
             this.chat.appendChild(ele);
             this.chat.scrollTop = this.chat.scrollHeight;
         }
+
     }
 
     // Send messages to server
