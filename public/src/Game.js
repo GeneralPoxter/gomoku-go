@@ -41,9 +41,7 @@ class Game {
             var otherColor = ["Black", "White"][(this.color + 1) % 2]
 
             // Store previous pieces, add piece to array pieces
-            if (this.prevPieces.push(JSON.parse(JSON.stringify(this.pieces))) == 3) {
-                this.prevPieces = this.prevPieces.slice(1);
-            }
+            this.prevPieces.push(this.pieces);
             this.pieces[this.r][this.c] = this.color + 1;
 
             // Check draw and takeback
@@ -56,8 +54,16 @@ class Game {
                 this.chatDisp(colorName + " cancelled the takeback offer");
             }
 
-            // Check captures
+            // Functionality specific to go
             if (this.type == "go") {
+                // Ko rule
+                if (this.type == "go" && this.prevPieces.includes(this.pieces)) {
+                    this.prevPieces = this.prevPieces.slice(0, this.prevPieces.length() - 1);
+                    this.pieces[this.r][this.c] = 0;
+                    return;
+                }
+                
+                // Check captures
                 if (this.checkCapture()) {
                     this.passes = 0;
                 }
@@ -265,8 +271,8 @@ class Game {
             else if (this.takeback) {
                 this.takeback = false;
                 this.chatDisp(otherColor + " accepted the takeback offer\nBlack and White's last moves reverted");
-                this.pieces = JSON.parse(JSON.stringify(this.prevPieces[0]));
-                this.prevPieces = [];
+                this.prevPieces = this.prevPieces.slice(0, this.prevPieces.length - 1);
+                this.pieces = JSON.parse(JSON.stringify(this.prevPieces[this.prevPieces.length - 1]));
                 this.renderBoard();
             }
             else {
