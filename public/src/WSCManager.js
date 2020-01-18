@@ -9,20 +9,17 @@ class WSCManager {
         this.wsc.onmessage = e => this.onMessage(e);
 
         // Prepare data for ws handshakes
-        this.id = Math.random();
         this.room = room;
         this.type = type;
-        this.color;
         this.data = {
-            id: this.id,
-            room: this.room,
+            name: this.room,
             type: this.type,
             cmd: '',
             val: ""
         };
 
         // Initialize board
-        this.board = new Board();
+        this.board = new BoardRenderer();
         this.pieces = [];
         for (var r = 0; r < 21; r++) {
             this.pieces.push(Array(21).fill(0));
@@ -45,6 +42,7 @@ class WSCManager {
         if (this.text.innerText != "Local game") {
             this.text.innerText = "Disconnected from room\nPlease press restart";
             this.turn.innerText = "";
+            this.chatDisp('res', "Disconnected from room " + this.room);
         }
     }
 
@@ -61,10 +59,11 @@ class WSCManager {
         var cmd = msg.cmd;
         var val = msg.val;
 
+        console.log(cmd, val);
+
         // Server assigns color
         if (cmd == "color") {
-            this.color = val;
-            this.text.innerText = "Online game\nColor is " + ["black", "white"][this.color];
+            this.text.innerText = "Online game\nColor is " + val;
         }
 
         // Server gives the current turn
@@ -84,19 +83,12 @@ class WSCManager {
 
         // Server ends game
         else if (cmd == "end") {
-            this.text.innerText = "Online game\nColor is " + ["black", "white"][this.color];
             this.turn.innerText = val + "\nPlease press restart";
         }
 
         // Server sends a chat message or response
         else if (cmd == "chat" || cmd == "res") {
-            var ele = document.createElement("p");
-            ele.innerText = val;
-            if (cmd == "res") {
-                ele.style.fontStyle = "italic";
-            }
-            this.chat.appendChild(ele);
-            this.chat.scrollTop = this.chat.scrollHeight;
+            this.chatDisp(cmd, val);
         }
 
     }
@@ -106,6 +98,17 @@ class WSCManager {
         this.data.cmd = cmd;
         this.data.val = val;
         this.wsc.send(JSON.stringify(this.data));
+    }
+
+    // Display messages in chat
+    chatDisp(cmd, msg) {
+        var ele = document.createElement("p");
+        ele.innerText = msg;
+        if (cmd == 'res') {
+            ele.style.fontStyle = "italic";
+        }
+        this.chat.appendChild(ele);
+        this.chat.scrollTop = this.chat.scrollHeight;
     }
 
     // Render board

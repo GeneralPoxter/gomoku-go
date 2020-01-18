@@ -1,8 +1,7 @@
 // Board display and function
-class Board {
+class BoardRenderer {
     // Constructor method
     constructor() {
-        // Initialize fields
         this.board = d3.select("#board");
     }
 

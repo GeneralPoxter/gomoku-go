@@ -1,11 +1,6 @@
 // Board manager for server-side game management
 class BoardManager {
     constructor() {
-        this.started = false;
-        this.drawColor = null;
-        this.takebackColor == null;
-        this.passes = 0;
-        
         this.pieces = [];
         this.pieces.push(Array(21).fill(9));
         for (var r = 0; r < 19; r++) {
@@ -17,15 +12,18 @@ class BoardManager {
     }
 
     updateBoard(r, c, color) {
-        this.updatePrev();
         this.pieces[r][c] = color + 1;
-        this.started = true;
+        this.updatePrev();
     }
 
     updatePrev() {
-        if (this.prevPieces.push(JSON.parse(JSON.stringify(this.pieces))) == 3) {
-            this.prevPieces = this.prevPieces.slice(1);
-        }
+        this.prevPieces.push(JSON.parse(JSON.stringify(this.pieces)));
+    }
+
+    // Takeback functionality
+    takeback() {
+        this.prevPieces = this.prevPieces.slice(0, this.prevPieces.length - 1);
+        this.pieces = JSON.parse(JSON.stringify(this.prevPieces[this.prevPieces.length - 1]));
     }
 
     // Check for 5 in a row
@@ -55,7 +53,7 @@ class BoardManager {
         return false;
     }
 
-     // Check captures in position and all orthogonal direction, prioritizing enemy color
+    // Check captures in position and all orthogonal direction, prioritizing enemy color
     checkCapture(r, c, color) {
         var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
         var checks = [];
@@ -71,7 +69,12 @@ class BoardManager {
         }
 
         // Prioritize the checking queue
-        checks.sort((a, b) => {if (color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
+        checks.sort((a, b) => {
+            if (color == 0) {
+                return b[2] - a[2];
+            }
+            return a[2] - b[2];
+        });
 
         for (var i = 0; i < checks.length; i++) {
             // Visited array to prevent overflow

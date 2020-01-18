@@ -11,7 +11,7 @@ class Game {
         this.end = false;
 
         // Initialize board
-        this.board = new Board();
+        this.board = new BoardRenderer();
         this.pieces = [];
         this.pieces.push(Array(21).fill(9));
         for (var r = 0; r < 19; r++) {
@@ -19,6 +19,7 @@ class Game {
         }
         this.pieces.push(Array(21).fill(9));
         this.prevPieces = []
+        this.updatePrev();
 
         // Set up HTML
         document.getElementById('code').value = "";
@@ -40,8 +41,7 @@ class Game {
             var colorName = ["Black", "White"][this.color];
             var otherColor = ["Black", "White"][(this.color + 1) % 2]
 
-            // Store previous pieces, add piece to array pieces
-            this.prevPieces.push(this.pieces);
+            // Add piece to pieces
             this.pieces[this.r][this.c] = this.color + 1;
 
             // Check draw and takeback
@@ -57,17 +57,15 @@ class Game {
             // Functionality specific to go
             if (this.type == "go") {
                 // Ko rule
-                if (this.type == "go" && this.prevPieces.includes(this.pieces)) {
-                    this.prevPieces = this.prevPieces.slice(0, this.prevPieces.length() - 1);
+                if (this.prevPieces.includes(this.pieces)) {
                     this.pieces[this.r][this.c] = 0;
                     return;
                 }
-                
+
                 // Check captures
                 if (this.checkCapture()) {
                     this.passes = 0;
-                }
-                else {
+                } else {
                     return;
                 }
             }
@@ -77,6 +75,9 @@ class Game {
             this.turn.innerText = otherColor + "'s turn";
             this.renderBoard();
 
+            // Store board in prevPieces
+            this.updatePrev();
+
             // Check win cases
             if (this.type == "gomoku") {
                 this.color = (this.color + 1) % 2;
@@ -84,8 +85,7 @@ class Game {
                     this.end = true;
                     this.turn.innerText = colorName + " won\nPlease press restart";
                     this.chatDisp("Game ended - " + colorName + " won");
-                }
-                else {
+                } else {
                     this.color = (this.color + 1) % 2;
                 }
             }
@@ -136,7 +136,7 @@ class Game {
         }
 
         // Prioritize the checking queue
-        checks.sort((a, b) => {if (this.color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
+        checks.sort((a, b) => { if (this.color == 0) { return b[2] - a[2]; } return a[2] - b[2]; });
 
         for (var i = 0; i < checks.length; i++) {
             // Visited array to prevent overflow
@@ -193,9 +193,10 @@ class Game {
     // Pass functionality
     pass() {
         var colorName = ["Black", "White"][this.color];
-        this.passes ++;
+        this.passes++;
+        this.updatePrev();
         this.chatDisp(colorName + "passed");
-        
+
         // Check draw and takeback
         if (this.draw) {
             this.draw = false;
@@ -208,7 +209,7 @@ class Game {
 
         this.color = (this.color + 1) % 2;
         this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
-        
+
         if (this.passes == 2) {
             this.end = true;
             this.turn.innerText = "Game ended\nPlease press restart";
@@ -235,11 +236,9 @@ class Game {
         if (msg == "/draw") {
             if (this.takeback) {
                 this.chatDisp("Unable to offer draw, takeback offer in progress");
-            }
-            else if (this.draw) {
+            } else if (this.draw) {
                 msg = "/accept";
-            }
-            else {
+            } else {
                 this.draw = true;
                 this.chatDisp(colorName + " offered a draw\n" + otherColor + " can accept with /accept or /draw and can reject with /reject\n" + colorName + " can cancel the offer with a move");
             }
@@ -248,14 +247,11 @@ class Game {
         if (msg == "/takeback") {
             if (this.draw) {
                 this.chatDisp("Unable to offer takeback, draw offer in progress");
-            }
-            else if (this.takeback) {
+            } else if (this.takeback) {
                 msg = "/accept";
-            }
-            else if (this.prevPieces.length < 2) {
-                this.chatDisp("No takebacks allowed on " + colorName + "'s first move or first move since last takeback, command ignored");
-            }
-            else {
+            } else if (this.prevPieces.length < 3) {
+                this.chatDisp("No takebacks allowed on " + colorName + "'s first move, command ignored");
+            } else {
                 this.takeback = true;
                 this.chatDisp(colorName + " offered a takeback\n" + otherColor + " can accept with /accept or /takeback and can reject with /reject\n" + colorName + " can cancel the offer with a move");
             }
@@ -267,15 +263,13 @@ class Game {
                 this.chatDisp(otherColor + " accepted the draw offer");
                 this.turn.innerText = "Game ended\nPlease press restart";
                 this.chatDisp("Game ended in a draw");
-            }
-            else if (this.takeback) {
+            } else if (this.takeback) {
                 this.takeback = false;
                 this.chatDisp(otherColor + " accepted the takeback offer\nBlack and White's last moves reverted");
-                this.prevPieces = this.prevPieces.slice(0, this.prevPieces.length - 1);
+                this.prevPieces = this.prevPieces.slice(0, this.prevPieces.length - 2);
                 this.pieces = JSON.parse(JSON.stringify(this.prevPieces[this.prevPieces.length - 1]));
                 this.renderBoard();
-            }
-            else {
+            } else {
                 this.chatDisp("No offer to accept, command ignored");
             }
         }
@@ -284,21 +278,23 @@ class Game {
             if (this.draw) {
                 this.draw = false;
                 this.chatDisp(otherColor + " rejected the draw offer");
-            }
-            else if (this.takeback) {
+            } else if (this.takeback) {
                 this.takeback = false;
                 this.chatDisp(otherColor + " rejected the takeback offer");
-            }
-            else {
+            } else {
                 this.chatDisp("No offer to reject, command ignored");
             }
         }
     }
 
+    updatePrev() {
+        this.prevPieces.push(JSON.parse(JSON.stringify(this.pieces)));
+    }
+
     // Render board
     renderBoard() {
         var cur = this;
-        this.board.render(this.pieces, function () {
+        this.board.render(this.pieces, function() {
             cur.addPiece(this);
         });
     }

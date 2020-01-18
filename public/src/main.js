@@ -1,11 +1,10 @@
-window.onerror = function(message, source, lineno, colno, error) { alert(error); }
 // Initialize fields
 var game;
 var ws;
 
 // Start game
 function main(mode, type) {
-    board = new Board();
+    board = new BoardRenderer();
 
     // Set up chat room
     document.getElementById("chatText").innerHTML = "";
@@ -40,8 +39,7 @@ function connect(room, type) {
 function pass() {
     if (ws != null && ws.type == "go") {
         ws.send('move', "pass");
-    }
-    else if (game.type == "go" && !game.end) {
+    } else if (game.type == "go" && !game.end) {
         game.pass();
     }
 }
@@ -51,8 +49,7 @@ function chat(msg) {
     document.getElementById("chatInput").value = "";
     if (ws != null) {
         ws.send('chat', msg);
-    }
-    else if (!game.end) {
+    } else if (!game.end) {
         game.cmd(msg);
     }
 }
