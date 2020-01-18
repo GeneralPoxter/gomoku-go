@@ -140,13 +140,13 @@ class Game {
 
         for (var i = 0; i < checks.length; i++) {
             // Visited array to prevent overflow
-            this.visited = []
+            var visited = []
             for (var j = 0; j < 21; j++) {
-                this.visited.push(Array(21).fill(0));
+                visited.push(Array(21).fill(0));
             }
 
             // Check the piece
-            if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2])) {
+            if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2], visited)) {
                 // Prevent self-capture
                 if (checks[i][2] == this.color + 1) {
                     this.replace(3, this.color + 1);
@@ -162,10 +162,10 @@ class Game {
     }
 
     // Check for liberties
-    hasLiberties(r, c, color) {
+    hasLiberties(r, c, color, visited) {
         var piece = this.pieces[r][c];
         var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
-        this.visited[r][c] = 1;
+        visited[r][c] = 1;
 
         if (piece == 0) {
             return true;
@@ -178,7 +178,7 @@ class Game {
         for (var i = 0; i < 4; i++) {
             var adjR = r + dir[i][0];
             var adjC = c + dir[i][1];
-            if (!this.visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color)) {
+            if (!visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color)) {
                 // Remove tentative mark
                 this.replace(3, color);
                 return true;
