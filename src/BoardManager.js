@@ -116,7 +116,7 @@ class BoardManager {
         for (var i = 0; i < 4; i++) {
             var adjR = r + dir[i][0];
             var adjC = c + dir[i][1];
-            if (!visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color)) {
+            if (!visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color, visited)) {
                 // Remove tentative mark
                 this.replace(3, color);
                 return true;
