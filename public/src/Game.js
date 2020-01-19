@@ -30,6 +30,28 @@ class Game {
         this.turn.innerText = "Black's turn";
     }
 
+    // Functionality for changing turns
+    nextTurn() {
+        var colorName = ["Black", "White"][this.color];
+        var otherColor = ["Black", "White"][(this.color + 1) % 2];
+
+        // Check draw and takeback cancellation
+        if (this.draw) {
+            this.drawColor = false;
+            this.chatDisp(colorName + " cancelled the draw offer");
+        }
+        if (this.takebackColor != null) {
+            this.takeback = false;
+            this.chatDisp(colorName + " cancelled the takeback offer")
+        }
+
+       // Update turns and board
+        this.color = (this.color + 1) % 2;
+        this.turn.innerText = otherColor + "'s turn";
+        this.renderBoard();
+        this.updatePrev();
+    }
+
     // Add piece to board
     addPiece(p) {
         var piece = d3.select(p);
@@ -38,21 +60,8 @@ class Game {
 
         // Check valid move
         if (this.pieces[this.r][this.c] == 0 && !this.end) {
-            var colorName = ["Black", "White"][this.color];
-            var otherColor = ["Black", "White"][(this.color + 1) % 2]
-
             // Add piece to pieces
             this.pieces[this.r][this.c] = this.color + 1;
-
-            // Check draw and takeback
-            if (this.draw) {
-                this.draw = false;
-                this.chatDisp(colorName + " cancelled the draw offer");
-            }
-            if (this.takeback) {
-                this.takeback = false;
-                this.chatDisp(colorName + " cancelled the takeback offer");
-            }
 
             // Functionality specific to go
             if (this.type == "go") {
@@ -63,33 +72,39 @@ class Game {
                 }
 
                 // Check captures
-                if (this.checkCapture()) {
-                    this.passes = 0;
-                } else {
+                if (!this.checkCapture()) {
+                   return;
+                }
+            }
+
+            // Check win cases
+            if (this.type == "gomoku") {
+                if (this.checkGomoku()) {
+                    this.end = true;
+                    this.renderBoard();
+                    var colorName = ["Black", "White"][this.color];
+                    this.turn.innerText = colorName + " won\nPlease press restart";
+                    this.chatDisp("Game ended - " + colorName + " won");
                     return;
                 }
             }
 
-            // Update turns and board
-            this.color = (this.color + 1) % 2;
-            this.turn.innerText = otherColor + "'s turn";
-            this.renderBoard();
+            // Change turns
+            this.nextTurn();
+            this.passes = 0;
+        }
+    }
 
-            // Store board in prevPieces
-            this.updatePrev();
+    // Pass functionality
+    pass() {
+        this.passes ++;
+        this.chatDisp(["Black", "White"][this.color] + "passed");
+        this.nextTurn();
 
-            // Check win cases
-            if (this.type == "gomoku") {
-                this.color = (this.color + 1) % 2;
-                if (this.checkGomoku()) {
-                    this.end = true;
-                    this.turn.innerText = colorName + " won\nPlease press restart";
-                    this.chatDisp("Game ended - " + colorName + " won");
-                } else {
-                    this.color = (this.color + 1) % 2;
-                }
-            }
-
+        if (this.passes == 2) {
+            this.end = true;
+            this.turn.innerText = "Game ended\nPlease press restart";
+            this.chatDisp("Game ended");
         }
     }
 
@@ -178,7 +193,7 @@ class Game {
         for (var i = 0; i < 4; i++) {
             var adjR = r + dir[i][0];
             var adjC = c + dir[i][1];
-            if (!visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color)) {
+            if (!visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color, visited)) {
                 // Remove tentative mark
                 this.replace(3, color);
                 return true;
@@ -188,33 +203,6 @@ class Game {
         // Tentatively marked for capture
         this.pieces[r][c] = 3;
         return false;
-    }
-
-    // Pass functionality
-    pass() {
-        var colorName = ["Black", "White"][this.color];
-        this.passes++;
-        this.updatePrev();
-        this.chatDisp(colorName + "passed");
-
-        // Check draw and takeback
-        if (this.draw) {
-            this.draw = false;
-            this.chatDisp(colorName + " cancelled the draw offer");
-        }
-        if (this.takeback) {
-            this.takeback = false;
-            this.chatDisp(colorName + " cancelled the takeback offer");
-        }
-
-        this.color = (this.color + 1) % 2;
-        this.turn.innerText = ["Black", "White"][this.color] + "'s turn";
-
-        if (this.passes == 2) {
-            this.end = true;
-            this.turn.innerText = "Game ended\nPlease press restart";
-            this.chatDisp("Game ended");
-        }
     }
 
     // Command functionality

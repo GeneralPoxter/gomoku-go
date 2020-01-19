@@ -126,8 +126,9 @@ class Room {
             this.send('both', 'res', this.colorName + " cancelled the takeback offer");
         }
 
-        // Update client boards
+        // Update client boards and prevPieces
         this.send('both', 'update', this.board.pieces);
+        this.board.updatePrev();
 
         // Update turns
         this.turn = (this.turn + 1) % 2;
@@ -139,6 +140,9 @@ class Room {
         if (this.board.pieces[r][c] != 0) {
             return;
         }
+
+        // Add piece to board
+        this.board.updateBoard(r, c, this.turn);
 
         // Functionality specific to go
         if (this.type == 'go') {
@@ -153,8 +157,6 @@ class Room {
             }
         }
 
-        this.board.updateBoard(r, c, this.turn);
-
         // Check win cases
         if (this.type == 'gomoku') {
             if (this.board.checkGomoku(r, c, this.turn)) {
@@ -166,6 +168,7 @@ class Room {
             }
         }
 
+        // Change turns
         this.nextTurn();
         this.passes = 0;
     }
@@ -173,7 +176,6 @@ class Room {
     // Pass functionality
     pass() {
         this.passes++;
-        this.board.updatePrev();
         this.nextTurn();
 
         if (this.passes == 2) {

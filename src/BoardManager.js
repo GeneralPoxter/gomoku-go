@@ -13,7 +13,6 @@ class BoardManager {
 
     updateBoard(r, c, color) {
         this.pieces[r][c] = color + 1;
-        this.updatePrev();
     }
 
     updatePrev() {
