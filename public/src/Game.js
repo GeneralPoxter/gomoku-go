@@ -45,7 +45,7 @@ class Game {
             this.chatDisp(colorName + " cancelled the takeback offer")
         }
 
-       // Update turns and board
+        // Update turns and board
         this.color = (this.color + 1) % 2;
         this.turn.innerText = otherColor + "'s turn";
         this.renderBoard();
@@ -65,28 +65,26 @@ class Game {
 
             // Functionality specific to go
             if (this.type == "go") {
-                // Ko rule
-                if (this.prevPieces.includes(this.pieces)) {
-                    this.pieces[this.r][this.c] = 0;
+                // Check captures
+                if (!this.checkCapture()) {
                     return;
                 }
 
-                // Check captures
-                if (!this.checkCapture()) {
-                   return;
+                // Ko rule
+                if (this.prevPieces.find(e => JSON.stringify(e) == JSON.stringify(this.pieces))) {
+                    this.pieces = JSON.parse(JSON.stringify(this.prevPieces[this.prevPieces.length - 1]));
+                    return;
                 }
             }
 
             // Check win cases
-            if (this.type == "gomoku") {
-                if (this.checkGomoku()) {
-                    this.end = true;
-                    this.renderBoard();
-                    var colorName = ["Black", "White"][this.color];
-                    this.turn.innerText = colorName + " won\nPlease press restart";
-                    this.chatDisp("Game ended - " + colorName + " won");
-                    return;
-                }
+            if (this.type == "gomoku" && this.checkGomoku()) {
+                this.end = true;
+                this.renderBoard();
+                var colorName = ["Black", "White"][this.color];
+                this.turn.innerText = colorName + " won\nPlease press restart";
+                this.chatDisp("Game ended - " + colorName + " won");
+                return;
             }
 
             // Change turns
@@ -97,14 +95,24 @@ class Game {
 
     // Pass functionality
     pass() {
-        this.passes ++;
-        this.chatDisp(["Black", "White"][this.color] + "passed");
+        this.passes++;
+        this.chatDisp(["Black", "White"][this.color] + " passed");
         this.nextTurn();
 
         if (this.passes == 2) {
             this.end = true;
+            const [blackScore, whiteScore] = this.areaScore();
+
+            // Display results
+            this.chatDisp("Black score: " + blackScore + "\nWhite score: " + whiteScore);
+            if (blackScore > whiteScore) {
+                this.chatDisp("Game ended - Black won");
+            } else if (whiteScore > blackScore) {
+                this.chatDisp("Game ended - White won");
+            } else {
+                this.chatDisp("Game ended in a tie");
+            }
             this.turn.innerText = "Game ended\nPlease press restart";
-            this.chatDisp("Game ended");
         }
     }
 
@@ -161,7 +169,7 @@ class Game {
             }
 
             // Check the piece
-            if (!this.hasLiberties(checks[i][0], checks[i][1], checks[i][2], visited)) {
+            if (!this.hasLiberties(checks[i][0], checks[i][1], visited, checks[i][2])) {
                 // Prevent self-capture
                 if (checks[i][2] == this.color + 1) {
                     this.replace(3, this.color + 1);
@@ -177,23 +185,34 @@ class Game {
     }
 
     // Check for liberties
-    hasLiberties(r, c, color, visited) {
+    hasLiberties(r, c, visited, color, otherColor) {
         var piece = this.pieces[r][c];
         var dir = [[1, 0], [-1, 0], [0, 1], [0, -1]];
         visited[r][c] = 1;
 
-        if (piece == 0) {
-            return true;
-        }
+        // Functionality specific to area scoring
+        if (color == 4) {
+            if (piece == otherColor || piece == 9) {
+                return false;
+            }
 
-        if (piece != color) {
-            return false;
+            if (piece != color) {
+                return true;
+            }
+        } else {
+            if (piece == 0) {
+                return true;
+            }
+
+            if (piece != color) {
+                return false;
+            }
         }
 
         for (var i = 0; i < 4; i++) {
             var adjR = r + dir[i][0];
             var adjC = c + dir[i][1];
-            if (!visited[adjR][adjC] && this.hasLiberties(adjR, adjC, color, visited)) {
+            if (!visited[adjR][adjC] && this.hasLiberties(adjR, adjC, visited, color, otherColor)) {
                 // Remove tentative mark
                 this.replace(3, color);
                 return true;
@@ -203,6 +222,48 @@ class Game {
         // Tentatively marked for capture
         this.pieces[r][c] = 3;
         return false;
+    }
+
+    // Score go board using area scoring
+    areaScore() {
+        var blackScore = 0;
+        var whiteScore = 0;
+
+        // Exception for empty board
+        if (JSON.stringify(this.pieces) == JSON.stringify(this.prevPieces[0])) {
+            return [0, 0];
+        }
+
+        // Include empty intersections into each color's territory
+        this.replace(0, 4);
+        for (var r = 1; r < 20; r++) {
+            for (var c = 1; c < 20; c++) {
+                if (this.pieces[r][c] == 4) {
+                    for (var i = 1; i < 3; i++) {
+                        var visited = []
+                        for (var j = 0; j < 21; j++) {
+                            visited.push(Array(21).fill(0));
+                        }
+                        this.hasLiberties(r, c, visited, 4, i);
+                        this.replace(3, i);
+                    }
+                }
+            }
+        }
+
+        // Count area on the board
+        for (var r = 1; r < 20; r++) {
+            for (var c = 1; c < 20; c++) {
+                if (this.pieces[r][c] == 1) {
+                    blackScore++;
+                }
+                if (this.pieces[r][c] == 2) {
+                    whiteScore++;
+                }
+            }
+        }
+
+        return [blackScore, whiteScore];
     }
 
     // Command functionality
@@ -282,7 +343,7 @@ class Game {
     // Render board
     renderBoard() {
         var cur = this;
-        this.board.render(this.pieces, function() {
+        this.board.render(this.pieces, function () {
             cur.addPiece(this);
         });
     }

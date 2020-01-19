@@ -146,26 +146,25 @@ class Room {
 
         // Functionality specific to go
         if (this.type == 'go') {
-            // Ko rule
-            if (this.board.prevPieces.includes(this.board.pieces)) {
+            // Check captures
+            if (!this.board.checkCapture(r, c, this.turn)) {
                 return;
             }
 
-            // Check captures
-            if (!this.board.checkCapture(r, c, this.turn)) {
+            // Ko rule
+            if (this.board.prevPieces.find(e => JSON.stringify(e) == JSON.stringify(this.board.pieces))) {
+                this.board.pieces = JSON.parse(JSON.stringify(this.board.prevPieces[this.board.prevPieces.length - 1]));
                 return;
             }
         }
 
         // Check win cases
-        if (this.type == 'gomoku') {
-            if (this.board.checkGomoku(r, c, this.turn)) {
-                this.turn = 4;
-                this.send('both', 'update', this.board.pieces);
-                this.send('both', 'res', "Game ended - " + this.colorName + " won");
-                this.send('both', 'end', "Game ended");
-                return;
-            }
+        if (this.type == 'gomoku' && this.board.checkGomoku(r, c, this.turn)) {
+            this.turn = 4;
+            this.send('both', 'update', this.board.pieces);
+            this.send('both', 'res', "Game ended - " + this.colorName + " won");
+            this.send('both', 'end', "Game ended");
+            return;
         }
 
         // Change turns
@@ -176,12 +175,23 @@ class Room {
     // Pass functionality
     pass() {
         this.passes++;
+        this.send('both', 'res', this.colorName + " passed");
         this.nextTurn();
 
         if (this.passes == 2) {
-            this.send('both', 'res', "Game ended - both players passed consecutively");
-            this.send('both', 'end', "Game ended");
             this.turn = 4;
+            const [blackScore, whiteScore] = this.board.areaScore();
+
+            // Display results
+            this.send('both', 'res', "Black score: " + blackScore + "\nWhite score: " + whiteScore);
+            if (blackScore > whiteScore) {
+                this.send('both', 'res', "Game ended - Black won");
+            } else if (whiteScore > blackScore) {
+                this.send('both', 'res', "Game ended - White won");
+            } else {
+                this.send('both', 'res', "Game ended in a tie");
+            }
+            this.send('both', 'end', "Game ended");
         }
     }
 
@@ -211,8 +221,7 @@ class Room {
             if (allPresent) {
                 this.turn = 4;
                 this.send('both', 'res', "Game ended - " + color + " forfeited");
-                this.send(color, 'end', "You lost");
-                this.send(otherColor, 'end', "You won");
+                this.send('both', 'end', "Game ended");
             } else {
                 this.send(color, 'res', otherColor + " not present, command ignored");
             }
