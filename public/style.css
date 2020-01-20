@@ -127,7 +127,9 @@ svg {
     font-family: 'Roboto', sans-serif;
     font-size: 1em;
     padding: 4px;
-    width: calc(100% - 8px);
+    padding-left: 8px;
+    padding-right: 8px;
+    width: calc(100% - 16px);
 }
 
 #chatText {
