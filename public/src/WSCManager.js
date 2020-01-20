@@ -59,8 +59,6 @@ class WSCManager {
         var cmd = msg.cmd;
         var val = msg.val;
 
-        console.log(cmd, val);
-
         // Server assigns color
         if (cmd == "color") {
             this.text.innerText = "Online game\nColor is " + val;

@@ -65,7 +65,7 @@ class Room {
             } else {
                 this.send(ws, 'turn', this.turn);
                 this.send(ws, 'res', "Connected to room " + this.name);
-                this.send(ws, 'res', "All commands beside /cmd only active when both players connected\nDraw and takeback offers can only be sent on your turn");
+                this.send(ws, 'res', "All commands beside /cmd only active when both players connected");
                 this.send(ws, 'res', "Opponent connected");
             }
 
@@ -87,7 +87,7 @@ class Room {
         this.send(ws, 'color', color);
         this.send(ws, 'turn', 0);
         this.send(ws, 'res', "Room " + this.name + " created");
-        this.send(ws, 'res', "All commands beside /cmd only active when both players connected\nDraw and takeback offers can only be sent on your turn");
+        this.send(ws, 'res', "All commands beside /cmd only active when both players connected");
 
         return true;
     }
@@ -256,10 +256,10 @@ class Room {
         if (msg == '/takeback') {
             if (allPresent) {
                 if (this.takebackColor == color) {
-                    this.send(color, 'res', "Unable to offer draw, takeback offer in progress");
+                    this.send(color, 'res', "Unable to offer takeback, takeback offer in progress");
                     return;
                 } else if (this.drawColor) {
-                    this.send(color, 'res', "Unable to offer draw, draw offer in progress");
+                    this.send(color, 'res', "Unable to offer takeback, draw offer in progress");
                     return;
                 } else if (this.board.prevPieces.length < 2) {
                     this.send(color, 'res', "No takebacks allowed on Black's first move, command ignored");
@@ -324,21 +324,20 @@ class Room {
 
         if (msg == "/rematch") {
             if (this.turn == 4) {
-                this.send('both', 'res', color + " has started a rematch, game reset");
+                this.send('both', 'res', color + " has started a rematch, game reset and colors swapped");
                 // Reset fields
-                this.turn = -1;
+                this.turn = 0;
                 this.colorName = 'Black';
+                [this.black, this.white] = [this.white, this.black];
                 this.board = new BoardManager();
-                var tempBlack = this.black;
-                var tempWhite = this.white;
-                this.black = null;
-                this.white = null;
                 this.passes = 0;
                 this.drawColor = null;
                 this.takebackColor == null;
-                // Reconnect clients
-                this.connect(tempBlack);
-                this.connect(tempWhite);
+                // Update clients
+                this.send('both', 'update', this.board.pieces);
+                this.send('Black', 'color', 'Black');
+                this.send('White', 'color', 'White');
+                this.send('both', 'turn', 0);
             } else {
                 this.send('both', 'res', "Game has not ended, command ignored");
             }
