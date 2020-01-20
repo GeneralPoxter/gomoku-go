@@ -13,20 +13,16 @@ class Game {
         // Initialize board
         this.board = new BoardRenderer();
         this.pieces = [];
-        this.pieces.push(Array(21)
-            .fill(9));
+        this.pieces.push(Array(21).fill(9));
         for (var r = 0; r < 19; r++) {
-            this.pieces.push([9].concat(Array(19)
-                .fill(0), [9]));
+            this.pieces.push([9].concat(Array(19).fill(0), [9]));
         }
-        this.pieces.push(Array(21)
-            .fill(9));
+        this.pieces.push(Array(21).fill(9));
         this.prevPieces = []
         this.updatePrev();
         
         // Set up HTML
-        document.getElementById('code')
-            .value = "";
+        document.getElementById('code').value = "";
         this.text = document.getElementById("status");
         this.turn = document.getElementById("turn");
         this.chat = document.getElementById("chatText");
@@ -174,8 +170,7 @@ class Game {
             // Visited array to prevent overflow
             var visited = []
             for (var j = 0; j < 21; j++) {
-                visited.push(Array(21)
-                    .fill(0));
+                visited.push(Array(21).fill(0));
             }
             
             // Check the piece
@@ -252,8 +247,7 @@ class Game {
                     for (var i = 1; i < 3; i++) {
                         var visited = []
                         for (var j = 0; j < 21; j++) {
-                            visited.push(Array(21)
-                                .fill(0));
+                            visited.push(Array(21).fill(0));
                         }
                         this.hasLiberties(r, c, visited, 4, i);
                         this.replace(3, i);

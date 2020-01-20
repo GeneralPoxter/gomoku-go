@@ -83,7 +83,7 @@ class WSCManager {
 
         // Server ends game
         else if (cmd == "end") {
-            this.turn.innerText = val + "\nPlease press restart";
+            this.turn.innerText = val + "\nPlease press restart to exit or run '/rematch' to rematch";
         }
 
         // Server sends a chat message or response

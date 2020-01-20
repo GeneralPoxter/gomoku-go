@@ -12,13 +12,14 @@ class Room {
         this.colorName = 'Black';
         this.black;
         this.white;
-        this.connect(ws);
 
         this.board = new BoardManager();
 
         this.passes = 0;
         this.drawColor = null;
         this.takebackColor == null;
+
+        this.connect(ws);
     }
 
     // Connect a new client
@@ -64,6 +65,7 @@ class Room {
             } else {
                 this.send(ws, 'turn', this.turn);
                 this.send(ws, 'res', "Connected to room " + this.name);
+                this.send(ws, 'res', "All commands beside /cmd only active when both players connected\nDraw and takeback offers can only be sent on your turn");
                 this.send(ws, 'res', "Opponent connected");
             }
 
@@ -81,6 +83,7 @@ class Room {
         }
 
         // Send client information
+        this.send(ws, 'update', this.board.pieces);
         this.send(ws, 'color', color);
         this.send(ws, 'turn', 0);
         this.send(ws, 'res', "Room " + this.name + " created");
@@ -197,6 +200,7 @@ class Room {
 
     // Chat functionality 
     processMsg(ws, msg) {
+        // Determine colors
         var color;
         var otherColor;
         if (this.black == ws) {
@@ -213,7 +217,7 @@ class Room {
         }
 
         if (msg == '/cmd') {
-            this.send(color, 'res', "/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting the last move, opponent must accept\n/accept: accept offer\n/reject: reject offer (for receiver)\n/cancel: cancel offer (for offerer)");
+            this.send(color, 'res', "/cmd: display commands\n/forfeit: forfeit the game\n/draw: offer draw, opponent must accept\n/takeback: offer takeback, reverting the last move, opponent must accept\n/accept: accept offer\n/reject: reject offer (for receiver)\n/cancel: cancel offer (for offerer)\n/rematch: start a rematch with opponent in same room");
             return;
         }
 
@@ -281,6 +285,7 @@ class Room {
             } else if (this.takebackColor == otherColor) {
                 this.takebackColor = null;
                 this.send('both', 'res', color + " accepted the takeback offer\nLast move reverted");
+                // Revert to last move
                 this.board.takeback();
                 this.send('both', 'update', this.board.pieces);
                 this.turn = (this.turn + 1) % 2;
@@ -313,6 +318,29 @@ class Room {
                 this.send('both', 'res', color + " cancelled the takeback offer");
             } else {
                 this.send(color, 'res', "No offer to cancel, command ignored");
+            }
+            return;
+        }
+
+        if (msg == "/rematch") {
+            if (this.turn == 4) {
+                this.send('both', 'res', color + " has started a rematch, game reset");
+                // Reset fields
+                this.turn = -1;
+                this.colorName = 'Black';
+                this.board = new BoardManager();
+                var tempBlack = this.black;
+                var tempWhite = this.white;
+                this.black = null;
+                this.white = null;
+                this.passes = 0;
+                this.drawColor = null;
+                this.takebackColor == null;
+                // Reconnect clients
+                this.connect(tempBlack);
+                this.connect(tempWhite);
+            } else {
+                this.send('both', 'res', "Game has not ended, command ignored");
             }
             return;
         }
