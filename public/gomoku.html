@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+    
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
@@ -13,13 +13,13 @@
         <script defer src="/src/BoardRenderer.js"></script>
         <script defer src="/src/main.js"></script>
     </head>
-
+    
     <body onload="main('local', 'gomoku');" onbeforeunload="connect('',''); return null;">
         <div class="main">
-
+            
             <div class="left">
                 <div class="cObject">
-                    <button style="font-size: 24px;" onclick="connect('','gomoku');">Restart Gomoku</button>
+                    <button style="font-size: 24px;" onclick="connect('','go');">Restart Gomoku</button>
                 </div>
                 <form class="lObject" name="inputA" onsubmit="connect(document.getElementById('code').value, 'gomoku'); return false;" autocomplete="off">
                     <div class="text">Join code:&nbsp;</div>
@@ -31,26 +31,31 @@
                 <div class="lObject">
                     <div id="turn" class="text"></div>
                 </div>
+                <div class="cObject">
+                    <button style="font-size: 24px; margin-top: 6px;" onclick="pass();">Pass</button>
+                </div>
             </div>
-
+            
             <div class="center">
                 <div class="cObject">
                     <svg id="board" viewBox="0 0 800 800"></svg>
                 </div>
             </div>
-
+            
             <div class="right">
                 <div class="rObject">
                     <div class="chatbox">
                         <div id="chatText"></div>
-                        <form name="inputB" onsubmit="chat(document.getElementById('chatInput').value); return false;" autocomplete="off">
-                            <input id="chatInput" name="chatInput" type="text" placeholder="Enter chat message here" />
-                        </form>
+                        <div class="chatForm">
+                            <form name="inputB" onsubmit="chat(document.getElementById('chatInput').value); return false;" autocomplete="off">
+                                <input id="chatInput" name="chatInput" type="text" placeholder="Enter chat message here" />
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            
         </div>
     </body>
-
+    
 </html>

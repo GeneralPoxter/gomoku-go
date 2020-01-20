@@ -1,55 +1,53 @@
-/* CSS */
-
 @import url('https://fonts.googleapis.com/css?family=Montserrat|Roboto&display=swap');
 body {
-    width: 100vw;
-    height: 100vh;
-    padding: 0;
-    margin: 0;
-    background-image: url('/img/background.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
     background-attachment: fixed;
+    background-image: url('/img/background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
 }
 
 .main {
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
-    justify-content: left;
-    width: 100%;
     height: 100%;
+    justify-content: left;
     padding: 2%;
+    width: 100%;
 }
 
 .left {
     display: flex;
     flex-direction: column;
+    height: 100%;
     justify-content: left;
     width: 20%;
-    height: 100%;
 }
 
 .center {
     display: block;
+    height: 100%;
     justify-content: center;
     width: 60%;
-    height: 100%;
 }
 
 .right {
     display: flex;
     flex-direction: column;
+    height: 100%;
     justify-content: right;
     width: 20%;
-    height: 100%;
 }
 
 .lObject {
     display: block;
     justify-content: left;
+    margin-bottom: 12px;
     width: 100%;
-    padding-top: 5%;
 }
 
 .cObject {
@@ -60,10 +58,9 @@ body {
 
 .rObject {
     display: block;
-    justify-content: right;
     height: 100%;
+    justify-content: right;
     width: 100%;
-    padding-top: 5%;
 }
 
 .text {
@@ -76,11 +73,11 @@ button {
     background-color: #deccba;
     border: 2px solid black;
     border-radius: 20px;
-    padding: 3px 24px;
     color: black;
-    font-family: 'Montserrat', sans-serif;
     cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
     outline: none;
+    padding: 3px 24px;
 }
 
 button:hover {
@@ -88,52 +85,84 @@ button:hover {
 }
 
 input {
+    background-color: #efe6df;
+    border: 2px solid black;
+    border-radius: 8px;
+    color: black;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    height: 26px;
     outline: none;
+    padding: 2px;
 }
 
 svg {
-    height: 96%;
-    width: 80%;
     background-image: url('/img/wood.jpg');
     background-repeat: no-repeat;
     background-size: cover;
+    height: 96%;
+    width: 80%;
 }
 
 .chatbox {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 90%;
-    width: 96%;
     background-color: #f8efe8;
     border: 2px solid black;
     border-radius: 20px;
-    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    justify-content: flex-end;
+    width: 96%;
 }
 
-.chatbox form {
-    height: 2%;
+.chatForm {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    width: 100%;
 }
 
-.chatbox input {
-    height: 100%;
+.chatForm input {
+    border: 0px;
+    border-radius: 0px 0px 20px 20px;
+    border-top: 2px solid black;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    padding: 4px;
+    width: calc(100% - 8px);
 }
 
 #chatText {
-    height: 98%;
-    overflow: auto;
+    font-family: 'Roboto', sans-serif;
+    height: auto;
+    margin: 4px;
+    overflow-y: auto;
     text-align: left;
     word-wrap: break-word;
-    font-family: 'Roboto', sans-serif;
 }
 
 #chatText p {
     margin: 4px;
-    margin-top: 0px;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+}
+
+#chatText::-webkit-scrollbar {
+    width: 10px;
+}
+
+#chatText::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 20px;
+}
+
+#chatText::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 20px;
+}
+
+#chatText::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    border-radius: 20px;
 }
 
 @media only screen and (max-width: 1320px) {
@@ -141,32 +170,30 @@ svg {
         flex-direction: column;
     }
     .left {
-        justify-content: center;
         height: auto;
-        width: 100%
+        justify-content: center;
+        width: 100%;
     }
     .center {
         height: auto;
         width: 100%;
-        padding-top: 2%;
     }
     .right {
-        justify-content: center;
         height: auto;
+        justify-content: center;
         width: 100%;
     }
     .lObject {
         display: inline-flex;
         justify-content: center;
-        padding-top: 2%;
     }
     .cObject {
         display: inline-flex;
+        margin: 10px;
     }
     .rObject {
         display: inline-flex;
         justify-content: center;
-        padding-top: 2%;
     }
     .text {
         text-align: center;
@@ -174,6 +201,5 @@ svg {
     .chatbox {
         height: 200px;
         width: 80%;
-        margin-bottom: 2%;
     }
 }
