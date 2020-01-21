@@ -99,8 +99,8 @@ svg {
     background-image: url('/img/wood.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    height: 80vh;
-    width: 80vh;
+    height: 90vh;
+    width: 90vh;
 }
 
 .chatbox {
@@ -109,7 +109,7 @@ svg {
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    height: calc(80vh - 4px);
+    height: calc(90vh - 4px);
     justify-content: flex-end;
 }
 
@@ -129,7 +129,7 @@ svg {
     padding: 4px;
     padding-left: 8px;
     padding-right: 8px;
-    width: calc(100% - 32px);
+    width: calc(100% - 16px);
 }
 
 #chatText {
