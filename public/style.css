@@ -165,7 +165,7 @@ svg {
     border-radius: 20px;
 }
 
-@media screen and (orientation: portrait), screen and (max-width: 1320px) {
+@media screen and (orientation: portrait), screen and (max-width: 1180px) {
     .main {
         flex-direction: column;
     }
@@ -209,5 +209,6 @@ svg {
     .chatbox {
         height: 250px;
         width: 80vw;
+        margin-bottom: 10px;
     }
 }
