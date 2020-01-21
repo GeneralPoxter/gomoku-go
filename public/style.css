@@ -16,7 +16,7 @@ body {
     flex-direction: row;
     height: 100%;
     justify-content: left;
-    margin: 2%;
+    padding: 2%;
     width: 100%;
 }
 
@@ -32,7 +32,7 @@ body {
     display: block;
     height: 100%;
     justify-content: center;
-    width: 56%;
+    width: 60%;
 }
 
 .right {
