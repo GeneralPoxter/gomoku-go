@@ -6,7 +6,7 @@ Beautiful website with options to play local and online gomoku and go.
 ### Gomoku
 * Black goes first
 * Alternate turns, placing down a piece on an empty intersection each turn
-* First to connect exactly 5 pieces of their color wins
+* First to connect (vertically, horizontally, or diagonally) exactly 5 pieces of their color wins
 ### Go
 * Black goes first
 * Alternate turns, with the option of placing down a piece on an empty intersection or passing each turn
