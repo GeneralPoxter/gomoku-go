@@ -16,7 +16,7 @@ Beautiful website with options to play local and online gomoku and go.
 * Capturing opposing pieces takes higher priority than self capture
 * Self-capture is illegal (i.e. a player cannot make a move that would instantly result in their piece(s) being captured)
 * Ko rule: a move cannot replicate a previous board position (prevents infinite gameplay)
-* Board is scored using area scoring: Color's score = # of pieces of that color on board + # of empty intersections exclusive surrounded by that color
+* Board is scored using area scoring: Color's score = # of pieces of that color on board + # of empty intersections exclusively surrounded by that color
 * Color with higher score wins
 
 ## Online game rooms
