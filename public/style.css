@@ -95,12 +95,16 @@ input {
     padding: 2px;
 }
 
+.lObject input {
+    max-width: 250px;
+}
+
 svg {
     background-image: url('/img/wood.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    height: 80vh;
-    width: 80vh;
+    height: 90vh;
+    width: 90vh;
 }
 
 .chatbox {
@@ -109,7 +113,7 @@ svg {
     border-radius: 20px;
     display: flex;
     flex-direction: column;
-    height: calc(80vh - 4px);
+    height: calc(90vh - 4px);
     justify-content: flex-end;
 }
 
@@ -127,7 +131,9 @@ svg {
     font-family: 'Roboto', sans-serif;
     font-size: 1em;
     padding: 4px;
-    width: calc(100% - 8px);
+    padding-left: 8px;
+    padding-right: 8px;
+    width: calc(100% - 16px);
 }
 
 #chatText {
@@ -163,7 +169,7 @@ svg {
     border-radius: 20px;
 }
 
-@media screen and (orientation: portrait), screen and (max-width: 1320px) {
+@media screen and (orientation: portrait), screen and (max-width: 1180px) {
     .main {
         flex-direction: column;
     }
@@ -185,7 +191,6 @@ svg {
         text-align: center;
     }
     .lObject input {
-        max-width: 250px;
         width: 80vw;
     }
     .cObject {
@@ -207,5 +212,6 @@ svg {
     .chatbox {
         height: 250px;
         width: 80vw;
+        margin-bottom: 10px;
     }
 }
