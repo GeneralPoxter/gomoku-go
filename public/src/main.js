@@ -4,8 +4,6 @@ var ws;
 
 // Start game
 function main(mode, type) {
-    board = new BoardRenderer();
-
     // Set up chat room
     document.getElementById("chatText").innerHTML = "";
     chatDisp("Chat room - Type '/cmd' for commands");
@@ -15,7 +13,7 @@ function main(mode, type) {
         game.renderBoard();
         chatDisp("Chat room disabled for local game, commands still available");
     } else {
-        ws.renderBoard();
+        ws.updateBoard(ws.board.pieces);
     }
 }
 

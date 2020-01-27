@@ -3,12 +3,18 @@ class BoardRenderer {
     // Constructor method
     constructor() {
         this.board = d3.select("#board");
+        this.pieces = [];
+        this.pieces.push(Array(21).fill(9));
+        for (var r = 0; r < 19; r++) {
+            this.pieces.push([9].concat(Array(19).fill(0), [9]));
+        }
+        this.pieces.push(Array(21).fill(9));
     }
 
     // Render board and pieces
     render(pieces, func) {
         // Clear board
-        this.board.selectAll("*").remove();
+        this.board.selectAll("rect, circle").remove();
 
         this.board.append("rect")
             .attr("x", 40)
@@ -34,6 +40,20 @@ class BoardRenderer {
                         .attr("stroke-width", "2")
                         .attr("stroke-dasharray", "0 40 40 0 40 0 0 40");
                 }
+                
+                var r = y / 40;
+                var c = x / 40;
+
+                // Highlight new piece
+                if (pieces[r][c] != this.pieces[r][c] && (pieces[r][c] == 1 || pieces[r][c] == 2)) {
+                    this.board.append("circle")
+                        .attr("cx", x)
+                        .attr("cy", y)
+                        .attr("r", "19.5")
+                        .attr("fill", "green")
+                        .attr("filter", "url(#highlight)");
+                }
+
                 // Create circular pieces
                 var circ = this.board.append("circle");
                 circ
@@ -41,15 +61,16 @@ class BoardRenderer {
                     .attr("cy", y)
                     .attr("r", "19")
                     .attr("fill", "transparent")
-                    .attr("stroke-width", "0.6")
                     .on("click", func);
-                var r = y / 40;
-                var c = x / 40;
+
                 if (pieces[r][c] == 1 || pieces[r][c] == 2) {
                     circ.attr("fill", "#" + (0xffffff * (pieces[r][c] - 1)).toString(16));
                 }
+
             }
         }
+        
+        this.pieces = JSON.parse(JSON.stringify(pieces));
     }
 
 }

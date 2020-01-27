@@ -20,10 +20,6 @@ class WSCManager {
 
         // Initialize board
         this.board = new BoardRenderer();
-        this.pieces = [];
-        for (var r = 0; r < 21; r++) {
-            this.pieces.push(Array(21).fill(0));
-        }
 
         // Set up HTML
         this.text = document.getElementById("status");
@@ -109,18 +105,12 @@ class WSCManager {
         this.chat.scrollTop = this.chat.scrollHeight;
     }
 
-    // Render board
-    renderBoard() {
+    // Update board
+    updateBoard(pieces) {
         var cur = this;
-        this.board.render(this.pieces, function() {
+        this.board.render(pieces, function() {
             var piece = d3.select(this);
             cur.send('move', (piece.attr("cy") / 40) + " " + (piece.attr("cx") / 40));
         });
-    }
-
-    // Update board
-    updateBoard(newPieces) {
-        this.pieces = newPieces;
-        this.renderBoard();
     }
 }
