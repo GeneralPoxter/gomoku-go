@@ -22,8 +22,7 @@
                     <button style="font-size: 24px;" onclick="connect('','gomoku');">Restart Gomoku</button>
                 </div>
                 <form class="lObject" name="inputA" onsubmit="connect(document.getElementById('code').value, 'gomoku'); return false;" autocomplete="off">
-                    <div class="text">Join code:&nbsp;</div>
-                    <input id="code" name="code" type="text" />
+                    <input id="code" name="code" type="text" placeholder="Enter join code" />
                 </form>
                 <div class="lObject">
                     <div id="status" class="text"></div>
@@ -49,7 +48,7 @@
                         <div id="chatText"></div>
                         <div class="chatForm">
                             <form name="inputB" onsubmit="chat(document.getElementById('chatInput').value); return false;" autocomplete="off">
-                                <input id="chatInput" name="chatInput" type="text" placeholder="Enter chat message here" />
+                                <input id="chatInput" name="chatInput" type="text" placeholder="Enter chat message" />
                             </form>
                         </div>
                     </div>
