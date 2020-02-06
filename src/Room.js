@@ -339,7 +339,7 @@ class Room {
                 this.send('White', 'color', 'White');
                 this.send('both', 'turn', 0);
             } else {
-                this.send('both', 'res', "Game has not ended, command ignored");
+                this.send('both', 'res', "Game has not ended and/or not all colors present, command ignored");
             }
             return;
         }
