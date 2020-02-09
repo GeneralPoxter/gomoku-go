@@ -15,7 +15,14 @@ class BoardRenderer {
     // Render board and pieces
     render(pieces, func) {
         // Clear board
-        this.board.selectAll("rect, circle").remove();
+        this.board.selectAll("circle, image, rect").remove();
+
+        this.board.append("image")
+            .attr("xlink:href", "/img/wood.jpg")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("height", 800)
+            .attr("width", 800);
 
         this.board.append("rect")
             .attr("x", 40)
