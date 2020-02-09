@@ -10,6 +10,7 @@ class BoardRenderer {
             this.pieces.push([9].concat(Array(19).fill(0), [9]));
         }
         this.pieces.push(Array(21).fill(9));
+        this.stars = [4, 10, 16];
     }
 
     // Render board and pieces
@@ -51,6 +52,14 @@ class BoardRenderer {
                 
                 var r = y / 40;
                 var c = x / 40;
+
+                if (this.stars.includes(r) && this.stars.includes(c)) {
+                    this.board.append("circle")
+                        .attr("cx", x)
+                        .attr("cy", y)
+                        .attr("r", "4")
+                        .attr("fill", "black");
+                }
 
                 // Highlight new piece
                 if (pieces[r][c] != this.pieces[r][c] && (pieces[r][c] == 1 || pieces[r][c] == 2)) {
