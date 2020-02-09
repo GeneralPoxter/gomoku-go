@@ -3,6 +3,7 @@ class BoardRenderer {
     // Constructor method
     constructor() {
         this.board = d3.select("#board");
+        this.board.append("image")
         this.pieces = [];
         this.pieces.push(Array(21).fill(9));
         for (var r = 0; r < 19; r++) {
