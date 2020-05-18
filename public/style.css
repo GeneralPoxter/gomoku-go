@@ -100,7 +100,7 @@ input {
 }
 
 svg {
-    height: 90vh;
+    height: 50vw;
 }
 
 .chatbox {
@@ -165,7 +165,7 @@ svg {
     border-radius: 20px;
 }
 
-@media screen and (max-aspect-ratio: 8/5) {
+@media screen and (max-height: 1200px) and (max-width: 1200px) {
     .main {
         flex-direction: column;
     }
@@ -201,21 +201,9 @@ svg {
     .text {
         text-align: center;
     }
-    svg {
-        height: 80vh;
-    }
     .chatbox {
         height: 250px;
         width: 80vh;
         margin-bottom: 10px;
-    }
-}
-
-@media screen and (max-width: 1180px)  {
-    svg {
-        height: 80vw;
-    }
-    .chatbox {
-        width: 80vh;
     }
 }
